@@ -40,8 +40,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -58,6 +60,7 @@ import dev.cfaz.timeclicker.data.TileColor
 import dev.cfaz.timeclicker.data.TileIcon
 import dev.cfaz.timeclicker.data.TileSize
 import dev.cfaz.timeclicker.data.TileSpec
+import dev.cfaz.timeclicker.data.TimeDisplay
 import dev.cfaz.timeclicker.data.Tracker
 import dev.cfaz.timeclicker.data.TrackerGroup
 import dev.cfaz.timeclicker.ui.components.NeuButton
@@ -70,6 +73,8 @@ import dev.cfaz.timeclicker.ui.theme.AppIcons
 import dev.cfaz.timeclicker.ui.theme.TimeClickerTheme
 import dev.cfaz.timeclicker.ui.theme.TileColors
 import dev.cfaz.timeclicker.ui.theme.rememberIconCatalog
+import dev.cfaz.timeclicker.ui.time.TimeDisplayPicker
+import dev.cfaz.timeclicker.ui.time.tileTimeInfo
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -82,14 +87,16 @@ data class TileDraft(
     val size: TileSize,
     val photo: String?,
     val reminder: Reminder? = null,
+    /** The tile's own time display; null follows the app setting. */
+    val timeDisplay: TimeDisplay? = null,
     /** Restart the press counter at 0 when saved. */
     val resetCount: Boolean = false,
 ) {
-    fun toSpec() = TileSpec(name.trim(), groupId, color, icon, size, photo, reminder)
+    fun toSpec() = TileSpec(name.trim(), groupId, color, icon, size, photo, reminder, timeDisplay)
 
     companion object {
         fun of(tracker: Tracker) = TileDraft(
-            tracker.name, tracker.groupId, tracker.color, tracker.icon, tracker.size, tracker.photo, tracker.reminder,
+            tracker.name, tracker.groupId, tracker.color, tracker.icon, tracker.size, tracker.photo, tracker.reminder, tracker.timeDisplay,
         )
     }
 }
@@ -110,7 +117,7 @@ fun EditTileSheet(
     groups: List<TrackerGroup>,
     photoFile: (String) -> File,
     importPhoto: suspend (Uri) -> String?,
-    createGroup: suspend (String) -> Long,
+    createGroup: suspend (String, TileIcon) -> Long,
     onSave: (TileDraft) -> Unit,
     onDiscard: () -> Unit,
     onDelete: () -> Unit,
@@ -200,6 +207,8 @@ fun EditTileSheet(
                         photo = draft.photo,
                         pressCount = if (draft.resetCount) 0 else saved.pressCount,
                         reminder = draft.reminder,
+                        createdAt = saved.createdAt,
+                        timeDisplay = draft.timeDisplay,
                     ),
                     photoFile = photoFile,
                     onClick = {},
@@ -295,6 +304,7 @@ fun EditTileSheet(
                         )
                     },
                     onSelect = { draft = draft.copy(size = it) },
+                    icon = { size, color -> TileSizeGlyph(size, color) },
                 )
             }
 
@@ -327,6 +337,21 @@ fun EditTileSheet(
                 }
             }
 
+            val context = LocalContext.current
+            val display = draft.timeDisplay ?: TimeClickerTheme.settings.timeDisplay
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                SectionLabel(stringResource(R.string.settings_time_display))
+                TimeDisplayPicker(
+                    selected = display,
+                    onSelect = { draft = draft.copy(timeDisplay = it) },
+                    info = tileTimeInfo(
+                        context, display,
+                        at = if (saved.hasPressed) saved.lastDoneAt else saved.createdAt,
+                        pressed = saved.hasPressed,
+                    ),
+                )
+            }
+
             ReminderSection(reminder = draft.reminder, rhythm = rhythm, onChange = { draft = draft.copy(reminder = it) })
 
             if (onAddWidget != null) {
@@ -356,12 +381,13 @@ fun EditTileSheet(
     }
 
     if (newGroupDialog) {
-        NameDialog(
+        GroupDialog(
             title = stringResource(R.string.dialog_new_group_title),
             initialName = "",
-            onConfirm = { name ->
+            initialIcon = TileIcon.NONE,
+            onConfirm = { name, icon ->
                 newGroupDialog = false
-                scope.launch { draft = draft.copy(groupId = createGroup(name)) }
+                scope.launch { draft = draft.copy(groupId = createGroup(name, icon)) }
             },
             onDismiss = { newGroupDialog = false },
         )
@@ -601,6 +627,17 @@ private const val PickerColumns = 6
 private val PickerGap = 8.dp
 private val PickerCellHeight = 46.dp
 private val PickerCellShape = RoundedCornerShape(14.dp)
+
+/** Tiny shape previewing a tile size: a square, a horizontal bar or a vertical bar. */
+@Composable
+private fun TileSizeGlyph(size: TileSize, color: Color) {
+    val (width, height) = when (size) {
+        TileSize.SMALL -> 12.dp to 12.dp
+        TileSize.WIDE -> 18.dp to 8.dp
+        TileSize.TALL -> 8.dp to 18.dp
+    }
+    Box(Modifier.size(width, height).clip(RoundedCornerShape(3.dp)).background(color))
+}
 
 private fun colorName(color: TileColor) = when (color) {
     TileColor.SAGE -> R.string.color_sage

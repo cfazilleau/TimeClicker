@@ -39,10 +39,10 @@ sealed interface GroupFilter {
         }
 }
 
-data class FilterChipUi(val filter: GroupFilter, val label: String?, val count: Int)
+data class FilterChipUi(val filter: GroupFilter, val label: String?, val count: Int, val icon: TileIcon = TileIcon.NONE)
 
 sealed interface SectionTitle {
-    data class Group(val name: String) : SectionTitle
+    data class Group(val name: String, val icon: TileIcon) : SectionTitle
     /** Tiles without a group: a plain grid without a heading, only on the All page. */
     data object None : SectionTitle
 }
@@ -126,10 +126,10 @@ class HomeViewModel(
         viewModelScope.launch { repository.reorderTrackers(orderedIds) }
     }
 
-    suspend fun createGroup(name: String): Long = repository.createGroup(name.trim())
+    suspend fun createGroup(name: String, icon: TileIcon): Long = repository.createGroup(name.trim(), icon)
 
-    fun renameGroup(group: TrackerGroup, name: String) {
-        viewModelScope.launch { repository.renameGroup(group.id, name.trim()) }
+    fun updateGroup(group: TrackerGroup, name: String, icon: TileIcon) {
+        viewModelScope.launch { repository.updateGroup(group.id, name.trim(), icon) }
     }
 
     suspend fun importPhoto(uri: Uri): String? = repository.importPhoto(uri)
@@ -153,14 +153,14 @@ class HomeViewModel(
             val all = buildList {
                 if (ungrouped.isNotEmpty()) add(SectionUi("ungrouped", SectionTitle.None, ungrouped))
                 groups.forEach { g ->
-                    byGroup[g.id]?.let { add(SectionUi("group-${g.id}", SectionTitle.Group(g.name), it)) }
+                    byGroup[g.id]?.let { add(SectionUi("group-${g.id}", SectionTitle.Group(g.name, g.icon), it)) }
                 }
             }
             add(PageUi(FilterChipUi(GroupFilter.All, null, trackers.size), all))
             groups.forEach { g ->
                 val inGroup = byGroup[g.id].orEmpty()
-                val section = SectionUi("group-${g.id}", SectionTitle.Group(g.name), inGroup)
-                add(PageUi(FilterChipUi(GroupFilter.Group(g.id), g.name, inGroup.size), listOf(section)))
+                val section = SectionUi("group-${g.id}", SectionTitle.Group(g.name, g.icon), inGroup)
+                add(PageUi(FilterChipUi(GroupFilter.Group(g.id), g.name, inGroup.size, g.icon), listOf(section)))
             }
         }
         return HomeUiState(trackers, groups, pages, current)

@@ -54,6 +54,7 @@
     <string name="action_done">Done</string>
     <string name="action_add">Add</string>
     <string name="action_rename">Rename</string>
+    <string name="action_edit">Edit</string>
     <string name="action_delete">Delete</string>
     <string name="action_back">Back</string>
     <string name="action_menu">Menu</string>
@@ -197,6 +198,8 @@
     <string name="dialog_delete_body">Its history will be deleted too.</string>
     <string name="dialog_new_group_title">New group</string>
     <string name="dialog_rename_group_title">Rename group</string>
+    <string name="dialog_edit_group_title">Edit group</string>
+    <string name="group_icon_remove">Remove icon</string>
     <string name="dialog_delete_group_title">Delete group “%1$s”?</string>
     <string name="dialog_delete_group_body">Its tiles are kept and stay in “All”.</string>
     <string name="dialog_reset_counter_title">Reset the counter?</string>
@@ -231,6 +234,16 @@
     <string name="time_display_relative">Relative</string>
     <!-- "6 Oct, 14:32" -->
     <string name="time_display_absolute">Absolute</string>
+    <!-- %1$s: "3 days ago" -->
+    <string name="time_info_pressed_relative">This tile was last pressed %1$s</string>
+    <!-- %1$s: "14 March 2015 at 9:26" -->
+    <string name="time_info_pressed_absolute">This tile was last pressed on %1$s</string>
+    <string name="time_info_created_relative">This tile was created %1$s</string>
+    <string name="time_info_created_absolute">This tile was created on %1$s</string>
+    <string name="time_info_installed_relative">The app was installed %1$s</string>
+    <string name="time_info_installed_absolute">The app was installed on %1$s</string>
+    <!-- %1$s: the date, %2$s: the time. "14 March 2015 at 9:26" -->
+    <string name="date_at_time">%1$s at %2$s</string>
     <string name="settings_haptics">Vibrate on tap</string>
     <string name="settings_haptics_hint">A short vibration when you tap or hold a tile.</string>
     <string name="settings_click_sound">Click sound</string>
