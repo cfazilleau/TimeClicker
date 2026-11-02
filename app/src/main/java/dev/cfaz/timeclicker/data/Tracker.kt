@@ -19,8 +19,11 @@ data class Tracker(
     /** This tile's own time display; null follows [AppSettings.timeDisplay]. */
     val timeDisplay: TimeDisplay? = null,
 ) {
-    /** Whether the tile was pressed since it was created. */
-    val hasPresses: Boolean get() = lastDoneAt > createdAt
+    /**
+     * Whether the tile was pressed since it was created. Until then [lastDoneAt] is the tile's creation: it still dates
+     * reminders, but no elapsed time is shown.
+     */
+    val hasPressed: Boolean get() = lastDoneAt > createdAt
 }
 
 data class TrackerGroup(
