@@ -42,6 +42,7 @@ class TrackerRepository(
                 photo = spec.photo,
                 reminderEvery = spec.reminder?.every,
                 reminderUnit = spec.reminder?.unitKey,
+                timeDisplay = spec.timeDisplay?.key,
             )
         )
         cleanUpPhotos()
@@ -51,7 +52,7 @@ class TrackerRepository(
     suspend fun updateTracker(trackerId: Long, spec: TileSpec) {
         dao.updateTracker(
             trackerId, spec.name, spec.groupId, spec.color.key, spec.icon.key, spec.size.key, spec.photo,
-            spec.reminder?.every, spec.reminder?.unitKey,
+            spec.reminder?.every, spec.reminder?.unitKey, spec.timeDisplay?.key,
         )
         cleanUpPhotos()
     }
@@ -119,6 +120,6 @@ private fun TrackerWithLastDone.toModel() = Tracker(
     photo = tracker.photo,
     pressCount = pressCount,
     reminder = Reminder.fromColumns(tracker.reminderEvery, tracker.reminderUnit),
-    // Creation records the tile's first event, so a press is any event after it.
-    hasPressed = lastDoneAt != null && lastDoneAt > tracker.createdAt,
+    createdAt = Instant.ofEpochMilli(tracker.createdAt),
+    timeDisplay = tracker.timeDisplay?.let(TimeDisplay::fromKey),
 )
