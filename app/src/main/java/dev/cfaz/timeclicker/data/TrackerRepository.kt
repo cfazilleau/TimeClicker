@@ -42,6 +42,7 @@ class TrackerRepository(
                 photo = spec.photo,
                 reminderEvery = spec.reminder?.every,
                 reminderUnit = spec.reminder?.unitKey,
+                timeDisplay = spec.timeDisplay?.key,
             )
         )
         cleanUpPhotos()
@@ -51,7 +52,7 @@ class TrackerRepository(
     suspend fun updateTracker(trackerId: Long, spec: TileSpec) {
         dao.updateTracker(
             trackerId, spec.name, spec.groupId, spec.color.key, spec.icon.key, spec.size.key, spec.photo,
-            spec.reminder?.every, spec.reminder?.unitKey,
+            spec.reminder?.every, spec.reminder?.unitKey, spec.timeDisplay?.key,
         )
         cleanUpPhotos()
     }
@@ -71,6 +72,12 @@ class TrackerRepository(
     /** Records that the tracker was done now. Returns the event id, usable with [undoMarkDone]. */
     suspend fun markDone(trackerId: Long): Long =
         dao.insertEvent(TrackerEventEntity(trackerId = trackerId, doneAt = clock.millis()))
+
+    /** Each tracker's latest press made within the last [windowMs], with its age in millis, by tracker id. */
+    suspend fun recentPresses(windowMs: Long): Map<Long, Pair<Long, Long>> {
+        val now = clock.millis()
+        return dao.eventsSince(now - windowMs).associate { it.trackerId to (it.id to (now - it.doneAt).coerceAtLeast(0)) }
+    }
 
     suspend fun undoMarkDone(eventId: Long) = dao.deleteEvent(eventId)
 
@@ -113,4 +120,6 @@ private fun TrackerWithLastDone.toModel() = Tracker(
     photo = tracker.photo,
     pressCount = pressCount,
     reminder = Reminder.fromColumns(tracker.reminderEvery, tracker.reminderUnit),
+    createdAt = Instant.ofEpochMilli(tracker.createdAt),
+    timeDisplay = tracker.timeDisplay?.let(TimeDisplay::fromKey),
 )

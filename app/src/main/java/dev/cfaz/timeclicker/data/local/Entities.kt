@@ -47,6 +47,8 @@ data class TrackerEntity(
     /** Reminder after [reminderEvery] [reminderUnit] ("hours", "days", "weeks") without being done; null for none. */
     @ColumnInfo(name = "reminder_every") val reminderEvery: Int? = null,
     @ColumnInfo(name = "reminder_unit") val reminderUnit: String? = null,
+    /** "relative" or "absolute" for this tile; null follows the app setting. */
+    @ColumnInfo(name = "time_display") val timeDisplay: String? = null,
 )
 
 /**
@@ -68,6 +70,13 @@ data class TrackerEntity(
 data class TrackerEventEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "tracker_id") val trackerId: Long,
+    @ColumnInfo(name = "done_at") val doneAt: Long,
+)
+
+/** A press: the event [id] and when it happened. */
+data class RecentPress(
+    @ColumnInfo(name = "tracker_id") val trackerId: Long,
+    val id: Long,
     @ColumnInfo(name = "done_at") val doneAt: Long,
 )
 

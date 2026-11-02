@@ -559,12 +559,12 @@ private fun Section(
 ) {
     val palette = TimeClickerTheme.palette
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        val title = when (val t = section.title) {
-            is SectionTitle.Group -> t.name
-            SectionTitle.None -> null
-        }
+        val title = section.title as? SectionTitle.Group
         if (title != null) {
-            Text(title, style = MaterialTheme.typography.titleLarge, color = palette.text)
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                rememberTileIcon(title.icon)?.let { Icon(it, null, tint = palette.text, modifier = Modifier.size(24.dp)) }
+                Text(title.name, style = MaterialTheme.typography.titleLarge, color = palette.text)
+            }
         }
         if (section.trackers.isEmpty()) {
             Text(stringResource(R.string.empty_group), style = MaterialTheme.typography.bodyMedium, color = palette.muted)

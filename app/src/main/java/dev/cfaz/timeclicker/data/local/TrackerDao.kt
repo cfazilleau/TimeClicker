@@ -51,7 +51,8 @@ interface TrackerDao {
         """
         UPDATE trackers
         SET name = :name, group_id = :groupId, color = :color, icon = :icon, size = :size, photo = :photo,
-            reminder_every = :reminderEvery, reminder_unit = :reminderUnit
+            reminder_every = :reminderEvery, reminder_unit = :reminderUnit,
+            time_display = :timeDisplay
         WHERE id = :id
         """
     )
@@ -65,6 +66,7 @@ interface TrackerDao {
         photo: String?,
         reminderEvery: Int?,
         reminderUnit: String?,
+        timeDisplay: String?,
     )
 
     @Query("DELETE FROM trackers WHERE id = :id")
@@ -107,6 +109,16 @@ interface TrackerDao {
     /** The tracker's latest [limit] event times, latest first. */
     @Query("SELECT done_at FROM tracker_events WHERE tracker_id = :trackerId ORDER BY done_at DESC LIMIT :limit")
     suspend fun recentEventTimes(trackerId: Long, limit: Int): List<Long>
+
+    /** Presses at or after [since] (millis), oldest first; a tracker's creation event is not a press. */
+    @Query(
+        """
+        SELECT e.tracker_id, e.id, e.done_at FROM tracker_events e JOIN trackers t ON t.id = e.tracker_id
+        WHERE e.done_at >= :since AND e.done_at > t.created_at
+        ORDER BY e.done_at, e.id
+        """
+    )
+    suspend fun eventsSince(since: Long): List<RecentPress>
 
     /** Deletes the tracker's latest event counted by its press counter. Returns how many were deleted: 0 or 1. */
     @Query(
