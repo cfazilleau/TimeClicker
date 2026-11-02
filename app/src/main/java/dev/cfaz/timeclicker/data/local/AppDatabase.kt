@@ -18,7 +18,7 @@ import dev.cfaz.timeclicker.data.TileIcon
  */
 @Database(
     entities = [GroupEntity::class, TrackerEntity::class, TrackerEventEntity::class],
-    version = 6,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = AppDatabase.Migration1To2::class),
@@ -27,6 +27,8 @@ import dev.cfaz.timeclicker.data.TileIcon
         AutoMigration(from = 4, to = 5),
         // v6 adds the per-tile time display, following the app setting for existing tiles.
         AutoMigration(from = 5, to = 6),
+        // v7 adds group icons, none for existing groups.
+        AutoMigration(from = 6, to = 7),
     ],
 )
 abstract class AppDatabase : RoomDatabase() {

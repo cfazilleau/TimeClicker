@@ -103,6 +103,7 @@ import dev.cfaz.timeclicker.ui.components.NeuIconButton
 import dev.cfaz.timeclicker.ui.components.PillButton
 import dev.cfaz.timeclicker.ui.theme.AppIcons
 import dev.cfaz.timeclicker.ui.theme.TimeClickerTheme
+import dev.cfaz.timeclicker.ui.theme.rememberTileIcon
 import dev.cfaz.timeclicker.widget.TileWidgets
 import kotlinx.coroutines.launch
 import java.io.File
@@ -218,10 +219,11 @@ fun HomeScreen(
         )
     }
     renamingGroupId?.let { id -> state?.groups?.find { it.id == id } }?.let { group ->
-        NameDialog(
-            title = stringResource(R.string.dialog_rename_group_title),
+        GroupDialog(
+            title = stringResource(R.string.dialog_edit_group_title),
             initialName = group.name,
-            onConfirm = { viewModel.renameGroup(group, it); renamingGroupId = null },
+            initialIcon = group.icon,
+            onConfirm = { name, icon -> viewModel.updateGroup(group, name, icon); renamingGroupId = null },
             onDismiss = { renamingGroupId = null },
         )
     }
@@ -477,7 +479,7 @@ private fun FilterChips(
     val palette = TimeClickerTheme.palette
     val haptics = LocalHapticFeedback.current
     val hapticsOn = TimeClickerTheme.settings.haptics
-    val editLabel = stringResource(R.string.action_rename)
+    val editLabel = stringResource(R.string.action_edit)
     // Padding inside the scroll area so the chips' shadows aren't clipped.
     Row(
         Modifier
@@ -503,6 +505,7 @@ private fun FilterChips(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     val color = if (isSelected) palette.onAccent else palette.text
+                    rememberTileIcon(chip.icon)?.let { Icon(it, null, tint = color, modifier = Modifier.size(18.dp)) }
                     Text(label, style = MaterialTheme.typography.titleSmall, color = color)
                     Text(chip.count.toString(), style = MaterialTheme.typography.labelMedium, color = color.copy(alpha = 0.7f))
                 }
@@ -556,12 +559,12 @@ private fun Section(
 ) {
     val palette = TimeClickerTheme.palette
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        val title = when (val t = section.title) {
-            is SectionTitle.Group -> t.name
-            SectionTitle.None -> null
-        }
+        val title = section.title as? SectionTitle.Group
         if (title != null) {
-            Text(title, style = MaterialTheme.typography.titleLarge, color = palette.text)
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+                rememberTileIcon(title.icon)?.let { Icon(it, null, tint = palette.text, modifier = Modifier.size(24.dp)) }
+                Text(title.name, style = MaterialTheme.typography.titleLarge, color = palette.text)
+            }
         }
         if (section.trackers.isEmpty()) {
             Text(stringResource(R.string.empty_group), style = MaterialTheme.typography.bodyMedium, color = palette.muted)
