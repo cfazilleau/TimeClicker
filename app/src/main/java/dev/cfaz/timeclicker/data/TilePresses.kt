@@ -36,11 +36,11 @@ class TilePresses(private val repository: TrackerRepository, private val scope: 
     private val mutex = Mutex()
 
     init {
-        scope.launch { restore() }
+        scope.launch { restoreUndoWindows() }
     }
 
     /** Reopens the undo window of each tile pressed less than [UNDO_WINDOW_MS] ago, e.g. before the app was closed. */
-    private suspend fun restore() = mutex.withLock {
+    private suspend fun restoreUndoWindows() = mutex.withLock {
         for ((trackerId, press) in repository.recentPresses(UNDO_WINDOW_MS)) {
             val (eventId, age) = press
             if (trackerId in pending.value) continue
@@ -75,10 +75,15 @@ class TilePresses(private val repository: TrackerRepository, private val scope: 
         }
     }
 
-    /** Deletes the tile's last counted press, ending its undo window if it has one. False if there was none. */
-    suspend fun revertLast(trackerId: Long): Boolean = mutex.withLock {
+    /** Deletes the tile's last counted press, ending its undo window if it has one. Returns its time; null if none. */
+    suspend fun revertLast(trackerId: Long): Long? = mutex.withLock {
         expiries.remove(trackerId)?.cancel()
         pending.update { it - trackerId }
         repository.revertLastPress(trackerId)
+    }
+
+    /** Puts back a press deleted by [revertLast], at its original time. */
+    suspend fun restore(trackerId: Long, doneAt: Long) = mutex.withLock {
+        repository.restorePress(trackerId, doneAt)
     }
 }
