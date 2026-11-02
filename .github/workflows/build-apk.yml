@@ -13,10 +13,10 @@ on:
         options: [none, internal, alpha, beta, production]
         default: none
       play-release-status:
-        description: Google Play release status (only "draft" until the app is first published)
+        description: Google Play release status
         type: choice
-        options: [draft, completed]
-        default: draft
+        options: [completed, draft]
+        default: completed
 
 permissions:
   contents: read
@@ -26,10 +26,13 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # A version tag publishes to Google Play: to the PLAY_TRACK repository variable's track (internal by default),
-  # as PLAY_RELEASE_STATUS (draft by default). A manual run publishes only when given a track.
-  PLAY_TRACK: ${{ startsWith(github.ref, 'refs/tags/v') && (vars.PLAY_TRACK || 'internal') || inputs.play-track || 'none' }}
-  PLAY_RELEASE_STATUS: ${{ startsWith(github.ref, 'refs/tags/v') && (vars.PLAY_RELEASE_STATUS || 'draft') || inputs.play-release-status || 'draft' }}
+  # A version tag publishes to Google Play. A beta tag (with a suffix: v1.8.0-beta.1) goes to the PLAY_BETA_TRACK
+  # repository variable's track (internal by default), a plain one (v1.8.0) to production, as PLAY_RELEASE_STATUS
+  # (completed by default). A manual run publishes only when given a track.
+  IS_TAG: ${{ startsWith(github.ref, 'refs/tags/v') }}
+  IS_BETA: ${{ startsWith(github.ref, 'refs/tags/v') && contains(github.ref_name, '-') }}
+  PLAY_TRACK: ${{ startsWith(github.ref, 'refs/tags/v') && (contains(github.ref_name, '-') && (vars.PLAY_BETA_TRACK || 'internal') || 'production') || inputs.play-track || 'none' }}
+  PLAY_RELEASE_STATUS: ${{ startsWith(github.ref, 'refs/tags/v') && (vars.PLAY_RELEASE_STATUS || 'completed') || inputs.play-release-status || 'completed' }}
 
 jobs:
   build:
@@ -111,9 +114,33 @@ jobs:
             app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: error
 
+  # Release notes from the pull requests merged since the previous tag (tools/release/changelog.py).
+  changelog:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # All history and tags, to find the previous tag.
+          fetch-depth: 0
+
+      - name: Write release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/release/changelog.py "$GITHUB_REF_NAME" changelog
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: changelog
+          path: changelog/
+          if-no-files-found: error
+
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: build
+    needs: [build, changelog]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -122,14 +149,25 @@ jobs:
         with:
           name: TimeClicker-${{ needs.build.outputs.version-name }}
 
+      - uses: actions/download-artifact@v8
+        with:
+          name: changelog
+          path: changelog
+
+      # A beta is a pre-release; only a production release becomes the repository's latest.
       - uses: softprops/action-gh-release@v3
         with:
           files: TimeClicker-*.apk
-          generate_release_notes: true
+          body_path: changelog/release-notes.md
+          prerelease: ${{ env.IS_BETA }}
+          make_latest: ${{ env.IS_BETA == 'false' }}
 
   google-play:
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.play-track != 'none')
-    needs: build
+    # changelog is skipped on manual runs, which then upload the committed release notes.
+    if: >-
+      !failure() && !cancelled() && needs.build.result == 'success' &&
+      (startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.play-track != 'none'))
+    needs: [build, changelog]
     runs-on: ubuntu-latest
     # Required reviewers or branch rules can be added to this environment in the repository settings.
     environment: google-play
@@ -141,6 +179,22 @@ jobs:
         with:
           name: TimeClicker-${{ needs.build.outputs.version-name }}-bundle
           path: bundle
+
+      - uses: actions/download-artifact@v8
+        if: env.IS_TAG == 'true'
+        with:
+          name: changelog
+          path: changelog
+
+      # Unless changelogs/default.txt were edited since the previous tag (then uploaded as committed), every language
+      # gets the generated English notes, instead of the previous release's.
+      - name: Use the generated release notes
+        if: env.IS_TAG == 'true' && hashFiles('changelog/play-notes.txt') != ''
+        run: |
+          for dir in fastlane/metadata/android/*/; do
+            mkdir -p "${dir}changelogs"
+            cp changelog/play-notes.txt "${dir}changelogs/default.txt"
+          done
 
       - uses: ruby/setup-ruby@v1
         with:
