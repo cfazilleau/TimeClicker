@@ -20,7 +20,7 @@ The full documentation is on the [wiki](https://github.com/cfazilleau/TimeClicke
 - [Building](wiki/Building.md): build and test locally
 - [Architecture](wiki/Architecture.md): tech stack, project layout, data model, database migrations
 - [Icons](wiki/Icons.md): the bundled Lucide icons and their search words
-- [Releasing](wiki/Releasing.md): CI, publishing to Google Play, [release signing](wiki/Releasing.md#release-signing)
+- [Releasing](wiki/Releasing.md): CI, [cutting a beta or a release](wiki/Releasing.md#cutting-a-beta-or-a-release), publishing to Google Play, [release signing](wiki/Releasing.md#release-signing)
 - [Store listing](tools/store/README.md): the Play Store text and screenshots
 - [Website](wiki/Website.md): the site in `docs/` and its privacy policy
 
