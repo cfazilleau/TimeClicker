@@ -13,7 +13,8 @@ Kotlin, Jetpack Compose, Room and Glance widgets; min SDK 26.
 
 ## Documentation
 
-The full documentation is in [`docs/`](docs/Home.md):
+The full documentation is on the [wiki](https://github.com/cfazilleau/TimeClicker/wiki), copied from
+[`docs/`](docs/Home.md) on every push to `main`:
 
 - [Features](docs/Features.md): everything the app does
 - [Building](docs/Building.md): build and test locally

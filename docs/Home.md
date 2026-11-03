@@ -18,4 +18,9 @@ or [download the APK](https://github.com/cfazilleau/TimeClicker/releases/latest)
 - [Store listing](https://github.com/cfazilleau/TimeClicker/blob/main/tools/store/README.md): the Play Store text and screenshots
 - [Website](Website.md): timeclicker.cfaz.dev and its privacy policy
 
-These pages are the `docs/` folder of the repository: change them along with the code they describe.
+## About this documentation
+
+These pages are the `docs/` folder of the repository, copied to the
+[wiki](https://github.com/cfazilleau/TimeClicker/wiki) on every push to `main` (`.github/workflows/wiki.yml`).
+Edit them in `docs/`, along with the code they describe: changes made on the wiki are overwritten.
+Pages link to each other as `Page.md`, so the links work in both places.

@@ -44,7 +44,7 @@ app/schemas/                   # exported Room schemas (commit these, they back 
 tools/lucide/generate_icons.py # regenerates icons.tsv from the latest Lucide release
 tools/store/                   # captures and frames the Play Store screenshots (see Store listing)
 fastlane/metadata/android/     # the Play Store listing: text and graphics, in every language
-docs/                          # this documentation
+docs/                          # this documentation, copied to the GitHub wiki
 web/                           # the website (timeclicker.cfaz.dev), privacy policy included
 ```
 
