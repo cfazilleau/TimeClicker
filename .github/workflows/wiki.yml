@@ -1,12 +1,12 @@
 name: Wiki
 
-# Copies docs/ to the repository's wiki tab, which GitHub keeps in its own git repository (TimeClicker.wiki.git).
-# docs/ is the source: edits made on the wiki are overwritten by the next sync.
+# Copies wiki/ to the repository's wiki tab, which GitHub keeps in its own git repository (TimeClicker.wiki.git).
+# wiki/ is the source: edits made on the wiki are overwritten by the next sync.
 on:
   push:
     branches: [main]
     paths:
-      - 'docs/**'
+      - 'wiki/**'
       - '.github/workflows/wiki.yml'
   workflow_dispatch:
 
@@ -27,16 +27,16 @@ jobs:
         env:
           TOKEN: ${{ github.token }}
         run: |
-          if ! git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki; then
+          if ! git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki-repo; then
             echo "::error::The wiki has no git repository yet. Create its first page once on GitHub (Wiki tab → Create the first page), then run this workflow again."
             exit 1
           fi
 
-      - name: Copy docs/ into it
+      - name: Copy wiki/ into it
         run: |
-          find wiki -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp -r docs/. wiki/
-          cd wiki
+          find wiki-repo -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp -r wiki/. wiki-repo/
+          cd wiki-repo
           # Pages link to each other as Page.md so the links work on GitHub too; wiki pages have no extension.
           sed -i -E 's/\]\(([A-Za-z0-9_-]+)\.md(#[^)]*)?\)/](\1\2)/g' *.md
           # The wiki shows the page name as its title: drop the page's own first heading.
@@ -47,7 +47,7 @@ jobs:
           done
 
       - name: Push
-        working-directory: wiki
+        working-directory: wiki-repo
         run: |
           git add -A
           if git diff --cached --quiet; then
