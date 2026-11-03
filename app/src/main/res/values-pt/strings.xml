@@ -280,7 +280,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Reordenar cards</string>
-    <string name="reorder_hint">Toque e segure um card, depois arraste-o para o novo lugar.</string>
+    <string name="reorder_hint">Arraste um card para o novo lugar ou para outro grupo.</string>
 
     <!-- About -->
     <string name="about_title">Sobre</string>

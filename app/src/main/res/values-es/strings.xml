@@ -280,7 +280,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Reordenar tarjetas</string>
-    <string name="reorder_hint">Mantén pulsada una tarjeta y arrástrala a su nuevo sitio.</string>
+    <string name="reorder_hint">Arrastra una tarjeta a su nuevo sitio o a otro grupo.</string>
 
     <!-- About -->
     <string name="about_title">Acerca de</string>

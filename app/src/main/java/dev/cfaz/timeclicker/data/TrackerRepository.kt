@@ -65,6 +65,10 @@ class TrackerRepository(
     /** Reorders some trackers among themselves, e.g. one group's; the others don't move. */
     suspend fun reorderTrackers(orderedIds: List<Long>) = dao.reorderTrackers(orderedIds)
 
+    /** Moves a tracker to another group (null: none), which then holds [orderedIds] in that order. */
+    suspend fun moveTracker(trackerId: Long, groupId: Long?, orderedIds: List<Long>) =
+        dao.moveTracker(trackerId, groupId, orderedIds)
+
     /** How often the tracker is usually done, from its recent history; null when it isn't regular. */
     suspend fun rhythm(trackerId: Long): Rhythm? =
         Rhythm.of(dao.recentEventTimes(trackerId, Rhythm.EVENTS_USED).map(Instant::ofEpochMilli))

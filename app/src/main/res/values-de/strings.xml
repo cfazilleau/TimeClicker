@@ -272,7 +272,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Kacheln anordnen</string>
-    <string name="reorder_hint">Kachel gedrückt halten, dann an ihren neuen Platz ziehen.</string>
+    <string name="reorder_hint">Ziehe eine Kachel an ihren neuen Platz oder in eine andere Gruppe.</string>
 
     <!-- About -->
     <string name="about_title">Über die App</string>

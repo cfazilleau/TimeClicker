@@ -272,7 +272,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">टाइल का क्रम बदलें</string>
-    <string name="reorder_hint">किसी टाइल को दबाकर रखें, फिर उसे नई जगह पर खींचें।</string>
+    <string name="reorder_hint">किसी टाइल को उसकी नई जगह या किसी दूसरे समूह में खींचें।</string>
 
     <!-- About -->
     <string name="about_title">ऐप के बारे में</string>

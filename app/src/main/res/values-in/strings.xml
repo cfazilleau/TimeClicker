@@ -264,7 +264,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Ubah urutan kartu</string>
-    <string name="reorder_hint">Tahan kartu, lalu seret ke tempat barunya.</string>
+    <string name="reorder_hint">Seret kartu ke tempat barunya atau ke grup lain.</string>
 
     <!-- About -->
     <string name="about_title">Tentang</string>

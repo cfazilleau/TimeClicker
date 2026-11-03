@@ -288,7 +288,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Zmień kolejność kafelków</string>
-    <string name="reorder_hint">Przytrzymaj kafelek, a potem przeciągnij go na nowe miejsce.</string>
+    <string name="reorder_hint">Przeciągnij kafelek na nowe miejsce lub do innej grupy.</string>
 
     <!-- About -->
     <string name="about_title">O aplikacji</string>

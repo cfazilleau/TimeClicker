@@ -272,7 +272,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Tegels ordenen</string>
-    <string name="reorder_hint">Houd een tegel vast en sleep hem naar zijn nieuwe plek.</string>
+    <string name="reorder_hint">Sleep een tegel naar zijn nieuwe plek of naar een andere groep.</string>
 
     <!-- About -->
     <string name="about_title">Over</string>

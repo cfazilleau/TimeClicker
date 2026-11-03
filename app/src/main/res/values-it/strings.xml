@@ -280,7 +280,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Riordina i riquadri</string>
-    <string name="reorder_hint">Tieni premuto un riquadro, poi trascinalo nella nuova posizione.</string>
+    <string name="reorder_hint">Trascina un riquadro nella nuova posizione o in un altro gruppo.</string>
 
     <!-- About -->
     <string name="about_title">Informazioni</string>
