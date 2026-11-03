@@ -2,7 +2,7 @@
 
 The Google Play listing lives in [`fastlane/metadata/android/`](../../fastlane/metadata/android), in the layout
 [fastlane supply](https://docs.fastlane.tools/actions/supply/) uploads. CI sends it with each release
-([Releasing, Publishing to Google Play](../../docs/Releasing.md#publishing-to-google-play)); it can also be copied by hand into the Play Console. One folder per store
+([Releasing, Publishing to Google Play](../../wiki/Releasing.md#publishing-to-google-play)); it can also be copied by hand into the Play Console. One folder per store
 language, the same 16 as the app:
 
 | File | Limit | |
