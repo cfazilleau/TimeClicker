@@ -160,6 +160,7 @@ class BackupRepository(
         .put(SettingsRepository.SHOW_COUNTER, s.showCounter)
         .put(SettingsRepository.ICON_PALETTE, SettingsRepository.paletteToKeys(s.iconPalette))
         .put(SettingsRepository.RECENT_ICONS, SettingsRepository.paletteToKeys(s.recentIcons))
+        .put(SettingsRepository.LAST_CUSTOM_COLOR, s.lastCustomColor?.key ?: JSONObject.NULL)
 
     /** Missing keys keep their default. */
     private fun settingsFromJson(json: JSONObject): AppSettings {
@@ -175,6 +176,7 @@ class BackupRepository(
                 ?.let { SettingsRepository.paletteFromKeys(it) } ?: d.iconPalette,
             recentIcons = json.optStringOrNull(SettingsRepository.RECENT_ICONS)
                 ?.let { SettingsRepository.paletteFromKeys(it) } ?: d.recentIcons,
+            lastCustomColor = CustomColor.fromKey(json.optStringOrNull(SettingsRepository.LAST_CUSTOM_COLOR)),
         )
     }
 

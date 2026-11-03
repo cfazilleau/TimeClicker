@@ -37,7 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     /** v2 adds groups and tile styling. Existing trackers get the colours in turn, like new ones. */
     class Migration1To2 : AutoMigrationSpec {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
-            // Same order as TileColor.entries.
+            // Same order as PresetColor.entries.
             db.execSQL(
                 """
                 UPDATE trackers SET color = CASE ((SELECT COUNT(*) FROM trackers t2 WHERE t2.position < trackers.position OR (t2.position = trackers.position AND t2.id < trackers.id)) % 6)

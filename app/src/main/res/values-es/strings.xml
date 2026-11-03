@@ -134,6 +134,13 @@
     <string name="color_system_primary">Acento del sistema</string>
     <string name="color_system_secondary">Tono suave del sistema</string>
     <string name="color_system_tertiary">Contraste del sistema</string>
+    <string name="color_custom">Color personalizado</string>
+    <string name="color_custom_choose">Elegir un color personalizado</string>
+    <string name="color_hue">Tono</string>
+    <string name="color_level_light">Claro</string>
+    <string name="color_level_natural">Natural</string>
+    <string name="color_level_dark">Oscuro</string>
+    <string name="color_custom_confirm">Usar color</string>
     <string name="icon_choice">Icono: %1$s</string>
     <string name="icon_all">Todos los iconos</string>
     <string name="icon_chooser_title">Elige un icono</string>

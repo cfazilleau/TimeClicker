@@ -120,6 +120,13 @@
     <string name="color_system_primary">系统强调色</string>
     <string name="color_system_secondary">系统柔和色</string>
     <string name="color_system_tertiary">系统对比色</string>
+    <string name="color_custom">自定义颜色</string>
+    <string name="color_custom_choose">选择自定义颜色</string>
+    <string name="color_hue">色相</string>
+    <string name="color_level_light">浅</string>
+    <string name="color_level_natural">自然</string>
+    <string name="color_level_dark">深</string>
+    <string name="color_custom_confirm">使用此颜色</string>
     <string name="icon_choice">图标：%1$s</string>
     <string name="icon_all">所有图标</string>
     <string name="icon_chooser_title">选择图标</string>

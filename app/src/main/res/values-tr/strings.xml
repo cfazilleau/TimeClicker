@@ -127,6 +127,13 @@
     <string name="color_system_primary">Sistem: vurgu</string>
     <string name="color_system_secondary">Sistem: yumuşak</string>
     <string name="color_system_tertiary">Sistem: kontrast</string>
+    <string name="color_custom">Özel renk</string>
+    <string name="color_custom_choose">Özel renk seç</string>
+    <string name="color_hue">Ton</string>
+    <string name="color_level_light">Açık</string>
+    <string name="color_level_natural">Doğal</string>
+    <string name="color_level_dark">Koyu</string>
+    <string name="color_custom_confirm">Rengi kullan</string>
     <string name="icon_choice">Simge: %1$s</string>
     <string name="icon_all">Tüm simgeler</string>
     <string name="icon_chooser_title">Simge seçin</string>

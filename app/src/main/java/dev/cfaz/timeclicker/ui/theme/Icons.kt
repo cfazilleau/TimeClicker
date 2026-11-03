@@ -85,6 +85,12 @@ object AppIcons {
             "M4 14h5a1 1 0 0 1 1 1v5a1 1 0 0 1 -1 1h-5a1 1 0 0 1 -1 -1v-5a1 1 0 0 1 1 -1z" +
             "M14 17.5a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0z",
     )
+    /** Lucide's "pipette": opens the custom colour picker. */
+    val Eyedropper = strokeIcon(
+        "eyedropper",
+        "M12 9l-8.414 8.414A2 2 0 0 0 3 18.828v1.344a2 2 0 0 1 -.586 1.414A2 2 0 0 1 3.828 21h1.344a2 2 0 0 0 1.414 -.586" +
+            "L15 12M18 9l.4 .4a1 1 0 1 1 -3 3l-3.8 -3.8a1 1 0 1 1 3 -3l.4 .4 3.4 -3.4a1 1 0 1 1 3 3zM2 22l.414 -.414",
+    )
     val Reorder = strokeIcon("reorder", "M21 16l-4 4 -4 -4M17 20V4M3 8l4 -4 4 4M7 4v16")
     val Search =strokeIcon("search", "M21 21l-4.34 -4.34M3 11a8 8 0 1 0 16 0a8 8 0 1 0 -16 0z", 2.2f)
     val Close = strokeIcon("close", "M18 6L6 18M6 6l12 12", 2.2f)

@@ -120,6 +120,13 @@
     <string name="color_system_primary">Sistem: aksen</string>
     <string name="color_system_secondary">Sistem: lembut</string>
     <string name="color_system_tertiary">Sistem: kontras</string>
+    <string name="color_custom">Warna kustom</string>
+    <string name="color_custom_choose">Pilih warna kustom</string>
+    <string name="color_hue">Rona</string>
+    <string name="color_level_light">Terang</string>
+    <string name="color_level_natural">Alami</string>
+    <string name="color_level_dark">Gelap</string>
+    <string name="color_custom_confirm">Gunakan warna</string>
     <string name="icon_choice">Ikon: %1$s</string>
     <string name="icon_all">Semua ikon</string>
     <string name="icon_chooser_title">Pilih ikon</string>

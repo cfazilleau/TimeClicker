@@ -127,6 +127,13 @@
     <string name="color_system_primary">Systeem: accent</string>
     <string name="color_system_secondary">Systeem: zacht</string>
     <string name="color_system_tertiary">Systeem: contrast</string>
+    <string name="color_custom">Eigen kleur</string>
+    <string name="color_custom_choose">Eigen kleur kiezen</string>
+    <string name="color_hue">Tint</string>
+    <string name="color_level_light">Licht</string>
+    <string name="color_level_natural">Natuurlijk</string>
+    <string name="color_level_dark">Donker</string>
+    <string name="color_custom_confirm">Gebruiken</string>
     <string name="icon_choice">Pictogram: %1$s</string>
     <string name="icon_all">Alle pictogrammen</string>
     <string name="icon_chooser_title">Kies een pictogram</string>

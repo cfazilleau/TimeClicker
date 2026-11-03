@@ -39,21 +39,44 @@ private fun Color.toOklch(): Triple<Double, Double, Double> {
     return Triple(ll, hypot(a, bb), hue)
 }
 
-private fun oklchToColor(lightness: Double, chroma: Double, hue: Double, alpha: Float): Color {
+/**
+ * The colour at OKLCH [lightness], [chroma] and [hue] (degrees). Where that is outside sRGB the chroma is lowered
+ * until it fits, keeping the lightness and hue, rather than clipping the channels (which shifts the hue).
+ */
+fun oklch(lightness: Double, chroma: Double, hue: Double, alpha: Float = 1f): Color {
+    if (linearRgb(lightness, chroma, hue).all { it in -GamutSlack..1 + GamutSlack }) {
+        return oklchToColor(lightness, chroma, hue, alpha)
+    }
+    var low = 0.0
+    var high = chroma
+    repeat(12) {
+        val mid = (low + high) / 2
+        if (linearRgb(lightness, mid, hue).all { it in -GamutSlack..1 + GamutSlack }) low = mid else high = mid
+    }
+    return oklchToColor(lightness, low, hue, alpha)
+}
+
+private const val GamutSlack = 0.0005
+
+private fun linearRgb(lightness: Double, chroma: Double, hue: Double): DoubleArray {
     val rad = hue * PI / 180
     val a = chroma * cos(rad)
     val b = chroma * sin(rad)
     val l = (lightness + 0.3963377774 * a + 0.2158037573 * b).pow(3)
     val m = (lightness - 0.1055613458 * a - 0.0638541728 * b).pow(3)
     val s = (lightness - 0.0894841775 * a - 1.2914855480 * b).pow(3)
+    return doubleArrayOf(
+        4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+        -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+        -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
+    )
+}
+
+private fun oklchToColor(lightness: Double, chroma: Double, hue: Double, alpha: Float): Color {
     fun gamma(v: Double): Float {
         val c = if (v <= 0.0031308) 12.92 * v else 1.055 * v.pow(1 / 2.4) - 0.055
         return c.toFloat().coerceIn(0f, 1f)
     }
-    return Color(
-        red = gamma(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
-        green = gamma(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
-        blue = gamma(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s),
-        alpha = alpha,
-    )
+    val (r, g, b) = linearRgb(lightness, chroma, hue)
+    return Color(red = gamma(r), green = gamma(g), blue = gamma(b), alpha = alpha)
 }
