@@ -1,6 +1,6 @@
 package dev.cfaz.timeclicker.ui.home
 
-import dev.cfaz.timeclicker.data.TileColor
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.TileIcon
 import dev.cfaz.timeclicker.data.TileSize
 import dev.cfaz.timeclicker.data.Tracker
@@ -13,7 +13,7 @@ import java.time.Instant
 class TileDragTest {
 
     private fun tile(id: Long, groupId: Long?) =
-        Tracker(id, "Tile $id", Instant.EPOCH, groupId, TileColor.pickable.first(), TileIcon.NONE, TileSize.SMALL, photo = null)
+        Tracker(id, "Tile $id", Instant.EPOCH, groupId, PresetColor.pickable.first(), TileIcon.NONE, TileSize.SMALL, photo = null)
 
     private val sections = listOf(
         SectionUi("ungrouped", SectionTitle.None, null, listOf(tile(1, null))),
