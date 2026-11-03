@@ -43,6 +43,8 @@ data class AppSettings(
     val iconPalette: List<TileIcon> = TileIcon.defaultPalette,
     /** The icons last given to a tile, latest first: shown first in the full icon list. */
     val recentIcons: List<TileIcon> = emptyList(),
+    /** The custom colour last given to a tile: offered next to the presets. */
+    val lastCustomColor: CustomColor? = null,
 )
 
 /**
@@ -67,6 +69,11 @@ class SettingsRepository(context: Context) {
         update { it.copy(recentIcons = (listOf(icon) + it.recentIcons).distinct().take(RECENT_ICONS_KEPT)) }
     }
 
+    /** [color] was just given to a tile: a custom one is offered next time. */
+    fun recordColorUse(color: TileColor) {
+        if (color is CustomColor) update { it.copy(lastCustomColor = color) }
+    }
+
     private fun read() = AppSettings(
         theme = ThemeMode.fromKey(prefs.getString(THEME, null)),
         dynamicColors = prefs.getBoolean(DYNAMIC_COLORS, true),
@@ -76,6 +83,7 @@ class SettingsRepository(context: Context) {
         showCounter = prefs.getBoolean(SHOW_COUNTER, true),
         iconPalette = prefs.getString(ICON_PALETTE, null)?.let { paletteFromKeys(it) } ?: TileIcon.defaultPalette,
         recentIcons = prefs.getString(RECENT_ICONS, null)?.let { paletteFromKeys(it) }.orEmpty(),
+        lastCustomColor = CustomColor.fromKey(prefs.getString(LAST_CUSTOM_COLOR, null)),
     )
 
     private fun write(settings: AppSettings) = prefs.edit {
@@ -87,6 +95,7 @@ class SettingsRepository(context: Context) {
         putBoolean(SHOW_COUNTER, settings.showCounter)
         putString(ICON_PALETTE, paletteToKeys(settings.iconPalette))
         putString(RECENT_ICONS, paletteToKeys(settings.recentIcons))
+        putString(LAST_CUSTOM_COLOR, settings.lastCustomColor?.key)
     }
 
     companion object {
@@ -99,6 +108,7 @@ class SettingsRepository(context: Context) {
         const val SHOW_COUNTER = "show_counter"
         const val ICON_PALETTE = "icon_palette"
         const val RECENT_ICONS = "recent_icons"
+        const val LAST_CUSTOM_COLOR = "last_custom_color"
 
         /** A few more than the icon chooser shows: icons missing from the catalog are skipped. */
         private const val RECENT_ICONS_KEPT = 16

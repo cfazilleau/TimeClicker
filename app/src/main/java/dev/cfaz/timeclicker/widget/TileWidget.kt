@@ -75,7 +75,7 @@ import dev.cfaz.timeclicker.MainActivity
 import dev.cfaz.timeclicker.R
 import dev.cfaz.timeclicker.data.IconCatalog
 import dev.cfaz.timeclicker.data.PendingUndo
-import dev.cfaz.timeclicker.data.TileColor
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.TimeDisplay
 import dev.cfaz.timeclicker.data.Tracker
 import dev.cfaz.timeclicker.data.UNDO_WINDOW_MS
@@ -169,11 +169,11 @@ private fun widgetColors(tracker: Tracker, hasPhoto: Boolean): WidgetColors {
     val glass = color(Color.White.copy(alpha = 0.55f), Color.White.copy(alpha = 0.09f))
     val theme = GlanceTheme.colors
     return when {
-        dynamicColors && supportsDynamicColor && tracker.color == TileColor.PRIMARY ->
+        dynamicColors && supportsDynamicColor && tracker.color == PresetColor.PRIMARY ->
             WidgetColors(theme.primaryContainer, theme.onPrimaryContainer, glass)
-        dynamicColors && supportsDynamicColor && tracker.color == TileColor.SECONDARY ->
+        dynamicColors && supportsDynamicColor && tracker.color == PresetColor.SECONDARY ->
             WidgetColors(theme.secondaryContainer, theme.onSecondaryContainer, glass)
-        dynamicColors && supportsDynamicColor && tracker.color == TileColor.TERTIARY ->
+        dynamicColors && supportsDynamicColor && tracker.color == PresetColor.TERTIARY ->
             WidgetColors(theme.tertiaryContainer, theme.onTertiaryContainer, glass)
         else -> {
             val l: TileColors = light.tile(tracker.color)

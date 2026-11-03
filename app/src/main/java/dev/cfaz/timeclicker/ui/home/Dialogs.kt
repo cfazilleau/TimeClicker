@@ -35,7 +35,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import dev.cfaz.timeclicker.R
-import dev.cfaz.timeclicker.data.TileColor
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.TileIcon
 import dev.cfaz.timeclicker.ui.icons.IconChooserSheet
 import dev.cfaz.timeclicker.ui.theme.AppIcons
@@ -113,7 +113,7 @@ fun GroupDialog(
     if (choosingIcon) {
         IconChooserSheet(
             selected = icon,
-            accent = palette.tile(TileColor.SAGE),
+            accent = palette.tile(PresetColor.SAGE),
             onSelect = { iconKey = it.key },
             onDismiss = { choosingIcon = false },
         )

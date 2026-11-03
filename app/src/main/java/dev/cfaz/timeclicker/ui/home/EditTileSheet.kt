@@ -54,6 +54,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import dev.cfaz.timeclicker.R
+import dev.cfaz.timeclicker.data.CustomColor
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.Reminder
 import dev.cfaz.timeclicker.data.Rhythm
 import dev.cfaz.timeclicker.data.TileColor
@@ -140,6 +142,7 @@ fun EditTileSheet(
     var newGroupDialog by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
     var confirmResetCount by remember { mutableStateOf(false) }
+    var pickingColor by remember { mutableStateOf<CustomColor?>(null) }
     // Times of the presses deleted from here, latest deleted last. Lost when the sheet closes.
     val redoStack = remember { mutableStateListOf<Long>() }
 
@@ -194,28 +197,7 @@ fun EditTileSheet(
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                val previewName = draft.name.ifBlank { stringResource(R.string.tile_preview_name) }
-                TileCard(
-                    tracker = Tracker(
-                        id = saved.id,
-                        name = previewName,
-                        lastDoneAt = saved.lastDoneAt,
-                        groupId = draft.groupId,
-                        color = draft.color,
-                        icon = draft.icon,
-                        size = TileSize.SMALL,
-                        photo = draft.photo,
-                        pressCount = if (draft.resetCount) 0 else saved.pressCount,
-                        reminder = draft.reminder,
-                        createdAt = saved.createdAt,
-                        timeDisplay = draft.timeDisplay,
-                    ),
-                    photoFile = photoFile,
-                    onClick = {},
-                    onLongClick = null,
-                    enabled = false,
-                    modifier = Modifier.size(width = 150.dp, height = 156.dp),
-                )
+                TilePreview(saved, draft, photoFile)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SectionLabel(stringResource(R.string.label_name))
                     NeuTextField(
@@ -275,7 +257,12 @@ fun EditTileSheet(
                         onRemove = { keptPhoto = null; draft = draft.copy(photo = null) },
                     )
                 } else {
-                    ColourSwatches(selected = draft.color, onSelect = { draft = draft.copy(color = it) })
+                    ColourSwatches(
+                        selected = draft.color,
+                        original = initial.color,
+                        onSelect = { draft = draft.copy(color = it) },
+                        onPickCustom = { pickingColor = it },
+                    )
                 }
                 if (photoError) {
                     Text(stringResource(R.string.photo_error), style = MaterialTheme.typography.bodySmall, color = palette.danger)
@@ -380,6 +367,14 @@ fun EditTileSheet(
         }
     }
 
+    pickingColor?.let { start ->
+        CustomColorDialog(
+            initial = start,
+            preview = { color -> TilePreview(saved, draft.copy(color = color, photo = null), photoFile) },
+            onConfirm = { pickingColor = null; draft = draft.copy(color = it) },
+            onDismiss = { pickingColor = null },
+        )
+    }
     if (newGroupDialog) {
         GroupDialog(
             title = stringResource(R.string.dialog_new_group_title),
@@ -417,6 +412,32 @@ fun EditTileSheet(
             onDismiss = { confirmDelete = false },
         )
     }
+}
+
+/** The tile as it will look once saved, at the small size. */
+@Composable
+private fun TilePreview(saved: Tracker, draft: TileDraft, photoFile: (String) -> File) {
+    TileCard(
+        tracker = Tracker(
+            id = saved.id,
+            name = draft.name.ifBlank { stringResource(R.string.tile_preview_name) },
+            lastDoneAt = saved.lastDoneAt,
+            groupId = draft.groupId,
+            color = draft.color,
+            icon = draft.icon,
+            size = TileSize.SMALL,
+            photo = draft.photo,
+            pressCount = if (draft.resetCount) 0 else saved.pressCount,
+            reminder = draft.reminder,
+            createdAt = saved.createdAt,
+            timeDisplay = draft.timeDisplay,
+        ),
+        photoFile = photoFile,
+        onClick = {},
+        onLongClick = null,
+        enabled = false,
+        modifier = Modifier.size(width = 150.dp, height = 156.dp),
+    )
 }
 
 @Composable
@@ -513,11 +534,23 @@ private fun SheetIconButton(icon: ImageVector, contentDescription: String, enabl
     }
 }
 
-/** The pastel colours, in rows of six cells the same size as the icon picker's. */
+/**
+ * The pastel colours, in rows of six cells the same size as the icon picker's. The last row ends with a custom colour
+ * and the eyedropper opening [CustomColorDialog]. That custom cell holds the tile's colour when it isn't a preset on
+ * offer (a custom colour, or one no longer offered), else the custom colour last given to a tile.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ColourSwatches(selected: TileColor, onSelect: (TileColor) -> Unit) {
-    val choices = TileColor.pickable
+private fun ColourSwatches(
+    selected: TileColor,
+    original: TileColor,
+    onSelect: (TileColor) -> Unit,
+    onPickCustom: (start: CustomColor) -> Unit,
+) {
+    val palette = TimeClickerTheme.palette
+    val lastCustom = TimeClickerTheme.settings.lastCustomColor ?: CustomColor.DEFAULT
+    val extra = listOf(selected, original).firstOrNull { it !in PresetColor.pickable } ?: lastCustom
+    val choices = PresetColor.pickable + extra
     FlowRow(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(PickerGap),
@@ -526,7 +559,7 @@ private fun ColourSwatches(selected: TileColor, onSelect: (TileColor) -> Unit) {
     ) {
         choices.forEach { color ->
             val isSelected = color == selected
-            val colors = TimeClickerTheme.palette.tile(color)
+            val colors = palette.tile(color)
             val name = stringResource(colorName(color))
             Box(
                 Modifier
@@ -539,7 +572,21 @@ private fun ColourSwatches(selected: TileColor, onSelect: (TileColor) -> Unit) {
                     .semantics { contentDescription = name },
             )
         }
-        repeat((PickerColumns - choices.size % PickerColumns) % PickerColumns) { Spacer(Modifier.weight(1f)) }
+        val chooseLabel = stringResource(R.string.color_custom_choose)
+        Box(
+            Modifier
+                .weight(1f)
+                .height(PickerCellHeight)
+                .clip(PickerCellShape)
+                .background(palette.field)
+                .clickable(role = Role.Button, onClickLabel = chooseLabel) {
+                    onPickCustom(selected as? CustomColor ?: extra as? CustomColor ?: lastCustom)
+                }
+                .semantics { contentDescription = chooseLabel },
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(AppIcons.Eyedropper, null, tint = palette.text, modifier = Modifier.size(22.dp))
+        }
     }
 }
 
@@ -640,19 +687,20 @@ private fun TileSizeGlyph(size: TileSize, color: Color) {
 }
 
 private fun colorName(color: TileColor) = when (color) {
-    TileColor.SAGE -> R.string.color_sage
-    TileColor.LAVENDER -> R.string.color_lavender
-    TileColor.PEACH -> R.string.color_peach
-    TileColor.SKY -> R.string.color_sky
-    TileColor.BUTTER -> R.string.color_butter
-    TileColor.ROSE -> R.string.color_rose
-    TileColor.TEAL -> R.string.color_teal
-    TileColor.ORCHID -> R.string.color_orchid
-    TileColor.CORAL -> R.string.color_coral
-    TileColor.SLATE -> R.string.color_slate
-    TileColor.LIME -> R.string.color_lime
-    TileColor.SAND -> R.string.color_sand
-    TileColor.PRIMARY -> R.string.color_system_primary
-    TileColor.SECONDARY -> R.string.color_system_secondary
-    TileColor.TERTIARY -> R.string.color_system_tertiary
+    is CustomColor -> R.string.color_custom
+    PresetColor.SAGE -> R.string.color_sage
+    PresetColor.LAVENDER -> R.string.color_lavender
+    PresetColor.PEACH -> R.string.color_peach
+    PresetColor.SKY -> R.string.color_sky
+    PresetColor.BUTTER -> R.string.color_butter
+    PresetColor.ROSE -> R.string.color_rose
+    PresetColor.TEAL -> R.string.color_teal
+    PresetColor.ORCHID -> R.string.color_orchid
+    PresetColor.CORAL -> R.string.color_coral
+    PresetColor.SLATE -> R.string.color_slate
+    PresetColor.LIME -> R.string.color_lime
+    PresetColor.SAND -> R.string.color_sand
+    PresetColor.PRIMARY -> R.string.color_system_primary
+    PresetColor.SECONDARY -> R.string.color_system_secondary
+    PresetColor.TERTIARY -> R.string.color_system_tertiary
 }

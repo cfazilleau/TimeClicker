@@ -44,8 +44,20 @@ data class TileSpec(
     val timeDisplay: TimeDisplay? = null,
 )
 
-/** Stored by [key]; unknown keys (e.g. from a newer app version) fall back to the first entry. */
-enum class TileColor(val key: String) {
+/**
+ * A tile's colour: one of the [PresetColor]s, or a [CustomColor] picked from the hue spectrum. Stored by [key], in the
+ * database and backups alike, so custom colours needed no new column.
+ */
+sealed interface TileColor {
+    val key: String
+
+    companion object {
+        /** Unknown keys (e.g. from a newer app version) fall back to [PresetColor.SAGE]. */
+        fun fromKey(key: String?): TileColor = CustomColor.fromKey(key) ?: PresetColor.fromKey(key)
+    }
+}
+
+enum class PresetColor(override val key: String) : TileColor {
     SAGE("sage"), LAVENDER("lavender"), PEACH("peach"), SKY("sky"), BUTTER("butter"), ROSE("rose"),
     TEAL("teal"), ORCHID("orchid"), CORAL("coral"), SLATE("slate"), LIME("lime"), SAND("sand"),
 
@@ -54,13 +66,45 @@ enum class TileColor(val key: String) {
 
     companion object {
         /**
-         * The colours offered when editing a tile, by hue then the neutrals. System colours are no longer offered;
-         * tiles using them keep them.
+         * The colours offered when editing a tile, by hue then the neutrals. Rose and teal made room for custom
+         * colours, and system colours are no longer offered either; tiles using them keep them.
          */
-        val pickable: List<TileColor> =
-            listOf(ROSE, CORAL, PEACH, BUTTER, LIME, SAGE, TEAL, SKY, LAVENDER, ORCHID, SAND, SLATE)
+        val pickable: List<PresetColor> = listOf(CORAL, PEACH, BUTTER, LIME, SAGE, SKY, LAVENDER, ORCHID, SAND, SLATE)
 
         fun fromKey(key: String?) = entries.firstOrNull { it.key == key } ?: SAGE
+    }
+}
+
+/** How light a [CustomColor] is. Each level has a light-theme and a dark-theme shade. */
+enum class ColorLevel(val key: String) {
+    LIGHT("light"), NATURAL("natural"), DARK("dark");
+
+    companion object {
+        fun fromKey(key: String?) = entries.firstOrNull { it.key == key } ?: NATURAL
+    }
+}
+
+/** A colour from the picker: a [hue] in degrees (0 until 360) at one of three [level]s. */
+data class CustomColor(val hue: Int, val level: ColorLevel) : TileColor {
+    init {
+        require(hue in 0 until 360) { "Hue out of range: $hue" }
+    }
+
+    override val key: String get() = "$PREFIX$hue:${level.key}"
+
+    companion object {
+        private const val PREFIX = "custom:"
+
+        /** Offered until a custom colour is used: the pink that rose was. */
+        val DEFAULT = CustomColor(350, ColorLevel.NATURAL)
+
+        /** Parses "custom:<hue>:<level>"; null for any other key. */
+        fun fromKey(key: String?): CustomColor? {
+            if (key == null || !key.startsWith(PREFIX)) return null
+            val parts = key.removePrefix(PREFIX).split(':')
+            val hue = parts[0].toIntOrNull() ?: return null
+            return CustomColor(hue.mod(360), ColorLevel.fromKey(parts.getOrNull(1)))
+        }
     }
 }
 

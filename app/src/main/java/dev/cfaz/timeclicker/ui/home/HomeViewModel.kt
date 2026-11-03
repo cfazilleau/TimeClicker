@@ -8,9 +8,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.cfaz.timeclicker.TimeClickerApplication
 import dev.cfaz.timeclicker.data.PendingUndo
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.Rhythm
 import dev.cfaz.timeclicker.data.SettingsRepository
-import dev.cfaz.timeclicker.data.TileColor
 import dev.cfaz.timeclicker.data.TileIcon
 import dev.cfaz.timeclicker.data.TilePresses
 import dev.cfaz.timeclicker.data.TileSize
@@ -102,7 +102,7 @@ class HomeViewModel(
     fun create(name: String) {
         val groupId = (state.value?.filter as? GroupFilter.Group)?.id
         viewModelScope.launch {
-            repository.addTracker(TileSpec(name.trim(), groupId, TileColor.pickable.random(), TileIcon.NONE, TileSize.SMALL, photo = null))
+            repository.addTracker(TileSpec(name.trim(), groupId, PresetColor.pickable.random(), TileIcon.NONE, TileSize.SMALL, photo = null))
         }
     }
 
@@ -116,6 +116,7 @@ class HomeViewModel(
     fun save(draft: TileDraft, saved: Tracker) {
         // Only a newly given icon counts as used: reopening a tile to rename it doesn't reorder the history.
         if (draft.icon != saved.icon) settings.recordIconUse(draft.icon)
+        if (draft.color != saved.color) settings.recordColorUse(draft.color)
         viewModelScope.launch {
             repository.updateTracker(saved.id, draft.toSpec())
             if (draft.resetCount) repository.resetCount(saved.id)

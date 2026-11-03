@@ -140,6 +140,14 @@
     <string name="color_system_primary">System accent</string>
     <string name="color_system_secondary">System soft</string>
     <string name="color_system_tertiary">System contrast</string>
+    <!-- The colour picker: a hue from the spectrum at one of three levels, each with a light- and dark-theme shade. -->
+    <string name="color_custom">Custom colour</string>
+    <string name="color_custom_choose">Choose a custom colour</string>
+    <string name="color_hue">Hue</string>
+    <string name="color_level_light">Light</string>
+    <string name="color_level_natural">Natural</string>
+    <string name="color_level_dark">Dark</string>
+    <string name="color_custom_confirm">Use colour</string>
     <string name="icon_choice">Icon: %1$s</string>
     <string name="icon_all">All icons</string>
     <string name="icon_chooser_title">Choose an icon</string>
