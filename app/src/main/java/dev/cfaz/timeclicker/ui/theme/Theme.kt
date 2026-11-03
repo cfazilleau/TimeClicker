@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.util.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import dev.cfaz.timeclicker.data.AppSettings
 import dev.cfaz.timeclicker.data.ThemeMode
+import dev.cfaz.timeclicker.data.CustomColor
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.TileColor
 
 /** Background, text and shadow colours of one tile style. */
@@ -75,10 +78,15 @@ data class TimeClickerPalette(
     val toastBackground: Color,
     val toastContent: Color,
     val toastAction: Color,
-    val tiles: Map<TileColor, TileColors>,
+    val tiles: Map<PresetColor, TileColors>,
     val photoTile: TileColors,
+    /** 0 in the light theme, 1 in the dark one, in between while fading: custom tile colours follow it. */
+    val darkness: Float = if (isDark) 1f else 0f,
 ) {
-    fun tile(color: TileColor): TileColors = tiles.getValue(color)
+    fun tile(color: TileColor): TileColors = when (color) {
+        is PresetColor -> tiles.getValue(color)
+        is CustomColor -> customTileColors(color, darkness)
+    }
 }
 
 val LightPalette = TimeClickerPalette(
@@ -98,18 +106,18 @@ val LightPalette = TimeClickerPalette(
     toastContent = Color.White,
     toastAction = Color(0xFF9FE3BC),
     tiles = mapOf(
-        TileColor.SAGE to TileColors(Color(0xFFC1EBCE), Color(0xFF1B472D), Color(0x6B538D68)),
-        TileColor.LAVENDER to TileColors(Color(0xFFD9D5FE), Color(0xFF3C237B), Color(0x6B7865C6)),
-        TileColor.PEACH to TileColors(Color(0xFFFFD9B9), Color(0xFF663801), Color(0x6BC78342)),
-        TileColor.SKY to TileColors(Color(0xFFC2E4FF), Color(0xFF024469), Color(0x6B4888B6)),
-        TileColor.BUTTER to TileColors(Color(0xFFF5E7AC), Color(0xFF53460A), Color(0x6BAF9A41)),
-        TileColor.ROSE to TileColors(Color(0xFFFACADF), Color(0xFF711B4C), Color(0x6BC46495)),
-        TileColor.TEAL to TileColors(Color(0xFFB4EBED), Color(0xFF004A4C), Color(0x6B419799)),
-        TileColor.ORCHID to TileColors(Color(0xFFF0D1F4), Color(0xFF5C1B67), Color(0x6BAC68B7)),
-        TileColor.CORAL to TileColors(Color(0xFFFECEC7), Color(0xFF781E1B), Color(0x6BD2685E)),
-        TileColor.SLATE to TileColors(Color(0xFFD8DEE6), Color(0xFF2C3846), Color(0x6B7A8798)),
-        TileColor.LIME to TileColors(Color(0xFFD5F0B7), Color(0xFF344C08), Color(0x6B83AA4D)),
-        TileColor.SAND to TileColors(Color(0xFFEADFCF), Color(0xFF4E3D27), Color(0x6BA68F70)),
+        PresetColor.SAGE to TileColors(Color(0xFFC1EBCE), Color(0xFF1B472D), Color(0x6B538D68)),
+        PresetColor.LAVENDER to TileColors(Color(0xFFD9D5FE), Color(0xFF3C237B), Color(0x6B7865C6)),
+        PresetColor.PEACH to TileColors(Color(0xFFFFD9B9), Color(0xFF663801), Color(0x6BC78342)),
+        PresetColor.SKY to TileColors(Color(0xFFC2E4FF), Color(0xFF024469), Color(0x6B4888B6)),
+        PresetColor.BUTTER to TileColors(Color(0xFFF5E7AC), Color(0xFF53460A), Color(0x6BAF9A41)),
+        PresetColor.ROSE to TileColors(Color(0xFFFACADF), Color(0xFF711B4C), Color(0x6BC46495)),
+        PresetColor.TEAL to TileColors(Color(0xFFB4EBED), Color(0xFF004A4C), Color(0x6B419799)),
+        PresetColor.ORCHID to TileColors(Color(0xFFF0D1F4), Color(0xFF5C1B67), Color(0x6BAC68B7)),
+        PresetColor.CORAL to TileColors(Color(0xFFFECEC7), Color(0xFF781E1B), Color(0x6BD2685E)),
+        PresetColor.SLATE to TileColors(Color(0xFFD8DEE6), Color(0xFF2C3846), Color(0x6B7A8798)),
+        PresetColor.LIME to TileColors(Color(0xFFD5F0B7), Color(0xFF344C08), Color(0x6B83AA4D)),
+        PresetColor.SAND to TileColors(Color(0xFFEADFCF), Color(0xFF4E3D27), Color(0x6BA68F70)),
     ) + schemeTiles(lightColorScheme(), isDark = false),
     photoTile = TileColors(Color(0xFF3A4150), Color.White, Color(0x6B3C465C)),
 )
@@ -131,37 +139,37 @@ val DarkPalette = TimeClickerPalette(
     toastContent = Color(0xFF1C1F26),
     toastAction = Color(0xFF1D6B45),
     tiles = mapOf(
-        TileColor.SAGE to TileColors(Color(0xFF2A4533), Color(0xFFC3F3D2), Color(0x99000000)),
-        TileColor.LAVENDER to TileColors(Color(0xFF372E5D), Color(0xFFE0DDFF), Color(0x99000000)),
-        TileColor.PEACH to TileColors(Color(0xFF4D3117), Color(0xFFFEDDC1), Color(0x99000000)),
-        TileColor.SKY to TileColors(Color(0xFF1A3D55), Color(0xFFCBE8FF), Color(0x99000000)),
-        TileColor.BUTTER to TileColors(Color(0xFF433B19), Color(0xFFF5E9B4), Color(0x99000000)),
-        TileColor.ROSE to TileColors(Color(0xFF4A2538), Color(0xFFFDD2E5), Color(0x99000000)),
-        TileColor.TEAL to TileColors(Color(0xFF1E4546), Color(0xFFB6F4F5), Color(0x99000000)),
-        TileColor.ORCHID to TileColors(Color(0xFF47294C), Color(0xFFF5D7FA), Color(0x99000000)),
-        TileColor.CORAL to TileColors(Color(0xFF552621), Color(0xFFFFD6D0), Color(0x99000000)),
-        TileColor.SLATE to TileColors(Color(0xFF2F3843), Color(0xFFDCE3EC), Color(0x99000000)),
-        TileColor.LIME to TileColors(Color(0xFF324416), Color(0xFFDBF5BD), Color(0x99000000)),
-        TileColor.SAND to TileColors(Color(0xFF423B31), Color(0xFFF0E5D5), Color(0x99000000)),
+        PresetColor.SAGE to TileColors(Color(0xFF2A4533), Color(0xFFC3F3D2), Color(0x99000000)),
+        PresetColor.LAVENDER to TileColors(Color(0xFF372E5D), Color(0xFFE0DDFF), Color(0x99000000)),
+        PresetColor.PEACH to TileColors(Color(0xFF4D3117), Color(0xFFFEDDC1), Color(0x99000000)),
+        PresetColor.SKY to TileColors(Color(0xFF1A3D55), Color(0xFFCBE8FF), Color(0x99000000)),
+        PresetColor.BUTTER to TileColors(Color(0xFF433B19), Color(0xFFF5E9B4), Color(0x99000000)),
+        PresetColor.ROSE to TileColors(Color(0xFF4A2538), Color(0xFFFDD2E5), Color(0x99000000)),
+        PresetColor.TEAL to TileColors(Color(0xFF1E4546), Color(0xFFB6F4F5), Color(0x99000000)),
+        PresetColor.ORCHID to TileColors(Color(0xFF47294C), Color(0xFFF5D7FA), Color(0x99000000)),
+        PresetColor.CORAL to TileColors(Color(0xFF552621), Color(0xFFFFD6D0), Color(0x99000000)),
+        PresetColor.SLATE to TileColors(Color(0xFF2F3843), Color(0xFFDCE3EC), Color(0x99000000)),
+        PresetColor.LIME to TileColors(Color(0xFF324416), Color(0xFFDBF5BD), Color(0x99000000)),
+        PresetColor.SAND to TileColors(Color(0xFF423B31), Color(0xFFF0E5D5), Color(0x99000000)),
     ) + schemeTiles(darkColorScheme(), isDark = true),
     photoTile = TileColors(Color(0xFF2A2F3A), Color.White, Color(0x99000000)),
 )
 
 /** The Material You tile colours: the scheme's primary, secondary and tertiary containers. */
-private fun schemeTiles(scheme: ColorScheme, isDark: Boolean): Map<TileColor, TileColors> {
+private fun schemeTiles(scheme: ColorScheme, isDark: Boolean): Map<PresetColor, TileColors> {
     fun tile(container: Color, content: Color, tint: Color) =
         TileColors(container, content, if (isDark) Color(0x99000000) else tint.copy(alpha = 0.42f))
     return mapOf(
-        TileColor.PRIMARY to tile(scheme.primaryContainer, scheme.onPrimaryContainer, scheme.primary),
-        TileColor.SECONDARY to tile(scheme.secondaryContainer, scheme.onSecondaryContainer, scheme.secondary),
-        TileColor.TERTIARY to tile(scheme.tertiaryContainer, scheme.onTertiaryContainer, scheme.tertiary),
+        PresetColor.PRIMARY to tile(scheme.primaryContainer, scheme.onPrimaryContainer, scheme.primary),
+        PresetColor.SECONDARY to tile(scheme.secondaryContainer, scheme.onSecondaryContainer, scheme.secondary),
+        PresetColor.TERTIARY to tile(scheme.tertiaryContainer, scheme.onTertiaryContainer, scheme.tertiary),
     )
 }
 
 /** The neumorphic palette re-tinted with a dynamic (Material You) [scheme]. */
 private fun dynamicPalette(scheme: ColorScheme, base: TimeClickerPalette): TimeClickerPalette {
     val dark = base.isDark
-    val fixedTiles = base.tiles.filterKeys { it.ordinal < TileColor.PRIMARY.ordinal }.mapValues { (_, t) ->
+    val fixedTiles = base.tiles.filterKeys { it.ordinal < PresetColor.PRIMARY.ordinal }.mapValues { (_, t) ->
         TileColors(harmonize(t.background, scheme.primary), harmonize(t.content, scheme.primary), harmonize(t.shadow, scheme.primary))
     }
     return base.copy(
@@ -329,6 +337,7 @@ private fun lerp(a: TimeClickerPalette, b: TimeClickerPalette, t: Float) = TimeC
     toastAction = lerp(a.toastAction, b.toastAction, t),
     tiles = b.tiles.mapValues { (color, tile) -> lerp(a.tiles[color] ?: tile, tile, t) },
     photoTile = lerp(a.photoTile, b.photoTile, t),
+    darkness = lerp(a.darkness, b.darkness, t),
 )
 
 private fun lerp(a: TileColors, b: TileColors, t: Float) =

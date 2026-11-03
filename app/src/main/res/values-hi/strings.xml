@@ -127,6 +127,13 @@
     <string name="color_system_primary">सिस्टम एक्सेंट</string>
     <string name="color_system_secondary">सिस्टम सॉफ़्ट</string>
     <string name="color_system_tertiary">सिस्टम कंट्रास्ट</string>
+    <string name="color_custom">कस्टम रंग</string>
+    <string name="color_custom_choose">कस्टम रंग चुनें</string>
+    <string name="color_hue">रंगत</string>
+    <string name="color_level_light">हल्का</string>
+    <string name="color_level_natural">प्राकृतिक</string>
+    <string name="color_level_dark">गहरा</string>
+    <string name="color_custom_confirm">रंग लागू करें</string>
     <string name="icon_choice">आइकन: %1$s</string>
     <string name="icon_all">सभी आइकन</string>
     <string name="icon_chooser_title">आइकन चुनें</string>
@@ -272,7 +279,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">टाइल का क्रम बदलें</string>
-    <string name="reorder_hint">किसी टाइल को दबाकर रखें, फिर उसे नई जगह पर खींचें।</string>
+    <string name="reorder_hint">किसी टाइल को उसकी नई जगह या किसी दूसरे समूह में खींचें।</string>
 
     <!-- About -->
     <string name="about_title">ऐप के बारे में</string>

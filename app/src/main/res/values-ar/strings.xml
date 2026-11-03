@@ -155,6 +155,13 @@
     <string name="color_system_primary">لون النظام المميز</string>
     <string name="color_system_secondary">لون النظام الهادئ</string>
     <string name="color_system_tertiary">لون النظام المتباين</string>
+    <string name="color_custom">لون مخصص</string>
+    <string name="color_custom_choose">اختيار لون مخصص</string>
+    <string name="color_hue">درجة اللون</string>
+    <string name="color_level_light">فاتح</string>
+    <string name="color_level_natural">طبيعي</string>
+    <string name="color_level_dark">داكن</string>
+    <string name="color_custom_confirm">استخدام اللون</string>
     <string name="icon_choice">الأيقونة: %1$s</string>
     <string name="icon_all">كل الأيقونات</string>
     <string name="icon_chooser_title">اختر أيقونة</string>
@@ -304,7 +311,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">إعادة ترتيب البطاقات</string>
-    <string name="reorder_hint">اضغط مطولًا على بطاقة، ثم اسحبها إلى مكانها الجديد.</string>
+    <string name="reorder_hint">اسحب بطاقة إلى مكانها الجديد أو إلى مجموعة أخرى.</string>
 
     <!-- About -->
     <string name="about_title">حول التطبيق</string>

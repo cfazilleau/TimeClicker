@@ -134,6 +134,13 @@
     <string name="color_system_primary">Accento di sistema</string>
     <string name="color_system_secondary">Tono tenue di sistema</string>
     <string name="color_system_tertiary">Contrasto di sistema</string>
+    <string name="color_custom">Colore personalizzato</string>
+    <string name="color_custom_choose">Scegli un colore personalizzato</string>
+    <string name="color_hue">Tonalità</string>
+    <string name="color_level_light">Chiaro</string>
+    <string name="color_level_natural">Naturale</string>
+    <string name="color_level_dark">Scuro</string>
+    <string name="color_custom_confirm">Usa colore</string>
     <string name="icon_choice">Icona: %1$s</string>
     <string name="icon_all">Tutte le icone</string>
     <string name="icon_chooser_title">Scegli un’icona</string>
@@ -280,7 +287,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Riordina i riquadri</string>
-    <string name="reorder_hint">Tieni premuto un riquadro, poi trascinalo nella nuova posizione.</string>
+    <string name="reorder_hint">Trascina un riquadro nella nuova posizione o in un altro gruppo.</string>
 
     <!-- About -->
     <string name="about_title">Informazioni</string>

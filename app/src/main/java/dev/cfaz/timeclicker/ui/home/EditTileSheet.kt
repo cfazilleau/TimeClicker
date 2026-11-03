@@ -32,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,8 +40,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -51,12 +54,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import dev.cfaz.timeclicker.R
+import dev.cfaz.timeclicker.data.CustomColor
+import dev.cfaz.timeclicker.data.PresetColor
 import dev.cfaz.timeclicker.data.Reminder
 import dev.cfaz.timeclicker.data.Rhythm
 import dev.cfaz.timeclicker.data.TileColor
 import dev.cfaz.timeclicker.data.TileIcon
 import dev.cfaz.timeclicker.data.TileSize
 import dev.cfaz.timeclicker.data.TileSpec
+import dev.cfaz.timeclicker.data.TimeDisplay
 import dev.cfaz.timeclicker.data.Tracker
 import dev.cfaz.timeclicker.data.TrackerGroup
 import dev.cfaz.timeclicker.ui.components.NeuButton
@@ -69,6 +75,8 @@ import dev.cfaz.timeclicker.ui.theme.AppIcons
 import dev.cfaz.timeclicker.ui.theme.TimeClickerTheme
 import dev.cfaz.timeclicker.ui.theme.TileColors
 import dev.cfaz.timeclicker.ui.theme.rememberIconCatalog
+import dev.cfaz.timeclicker.ui.time.TimeDisplayPicker
+import dev.cfaz.timeclicker.ui.time.tileTimeInfo
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -81,14 +89,16 @@ data class TileDraft(
     val size: TileSize,
     val photo: String?,
     val reminder: Reminder? = null,
+    /** The tile's own time display; null follows the app setting. */
+    val timeDisplay: TimeDisplay? = null,
     /** Restart the press counter at 0 when saved. */
     val resetCount: Boolean = false,
 ) {
-    fun toSpec() = TileSpec(name.trim(), groupId, color, icon, size, photo, reminder)
+    fun toSpec() = TileSpec(name.trim(), groupId, color, icon, size, photo, reminder, timeDisplay)
 
     companion object {
         fun of(tracker: Tracker) = TileDraft(
-            tracker.name, tracker.groupId, tracker.color, tracker.icon, tracker.size, tracker.photo, tracker.reminder,
+            tracker.name, tracker.groupId, tracker.color, tracker.icon, tracker.size, tracker.photo, tracker.reminder, tracker.timeDisplay,
         )
     }
 }
@@ -109,12 +119,14 @@ fun EditTileSheet(
     groups: List<TrackerGroup>,
     photoFile: (String) -> File,
     importPhoto: suspend (Uri) -> String?,
-    createGroup: suspend (String) -> Long,
+    createGroup: suspend (String, TileIcon) -> Long,
     onSave: (TileDraft) -> Unit,
     onDiscard: () -> Unit,
     onDelete: () -> Unit,
-    /** Deletes the tile's last counted press, straight away. */
-    onRevertLastPress: () -> Unit,
+    /** Deletes the tile's last counted press, straight away. Returns its time, null if there was none. */
+    onRevertLastPress: suspend () -> Long?,
+    /** Puts back a press deleted by [onRevertLastPress], given its time. */
+    onRestorePress: suspend (Long) -> Unit,
     onAddWidget: (() -> Unit)?,
 ) {
     val palette = TimeClickerTheme.palette
@@ -130,6 +142,9 @@ fun EditTileSheet(
     var newGroupDialog by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
     var confirmResetCount by remember { mutableStateOf(false) }
+    var pickingColor by remember { mutableStateOf<CustomColor?>(null) }
+    // Times of the presses deleted from here, latest deleted last. Lost when the sheet closes.
+    val redoStack = remember { mutableStateListOf<Long>() }
 
     val canSave = draft.name.isNotBlank()
     fun close(save: Boolean) {
@@ -182,26 +197,7 @@ fun EditTileSheet(
             }
 
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                val previewName = draft.name.ifBlank { stringResource(R.string.tile_preview_name) }
-                TileCard(
-                    tracker = Tracker(
-                        id = saved.id,
-                        name = previewName,
-                        lastDoneAt = saved.lastDoneAt,
-                        groupId = draft.groupId,
-                        color = draft.color,
-                        icon = draft.icon,
-                        size = TileSize.SMALL,
-                        photo = draft.photo,
-                        pressCount = if (draft.resetCount) 0 else saved.pressCount,
-                        reminder = draft.reminder,
-                    ),
-                    photoFile = photoFile,
-                    onClick = {},
-                    onLongClick = null,
-                    enabled = false,
-                    modifier = Modifier.size(width = 150.dp, height = 156.dp),
-                )
+                TilePreview(saved, draft, photoFile)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SectionLabel(stringResource(R.string.label_name))
                     NeuTextField(
@@ -261,7 +257,12 @@ fun EditTileSheet(
                         onRemove = { keptPhoto = null; draft = draft.copy(photo = null) },
                     )
                 } else {
-                    ColourSwatches(selected = draft.color, onSelect = { draft = draft.copy(color = it) })
+                    ColourSwatches(
+                        selected = draft.color,
+                        original = initial.color,
+                        onSelect = { draft = draft.copy(color = it) },
+                        onPickCustom = { pickingColor = it },
+                    )
                 }
                 if (photoError) {
                     Text(stringResource(R.string.photo_error), style = MaterialTheme.typography.bodySmall, color = palette.danger)
@@ -290,6 +291,7 @@ fun EditTileSheet(
                         )
                     },
                     onSelect = { draft = draft.copy(size = it) },
+                    icon = { size, color -> TileSizeGlyph(size, color) },
                 )
             }
 
@@ -303,11 +305,38 @@ fun EditTileSheet(
                         color = palette.text,
                         modifier = Modifier.weight(1f),
                     )
-                    if (count > 0) {
-                        SheetIconButton(AppIcons.Undo, stringResource(R.string.counter_undo_last), onClick = onRevertLastPress)
-                        SheetButton(stringResource(R.string.counter_reset), onClick = { confirmResetCount = true })
-                    }
+                    SheetIconButton(
+                        AppIcons.Undo,
+                        stringResource(R.string.counter_undo_last),
+                        enabled = count > 0,
+                        onClick = { scope.launch { onRevertLastPress()?.let { redoStack.add(it) } } },
+                    )
+                    SheetIconButton(
+                        AppIcons.Redo,
+                        stringResource(R.string.counter_redo_last),
+                        enabled = redoStack.isNotEmpty() && !draft.resetCount,
+                        onClick = {
+                            val doneAt = redoStack.removeLastOrNull()
+                            if (doneAt != null) scope.launch { onRestorePress(doneAt) }
+                        },
+                    )
+                    SheetButton(stringResource(R.string.counter_reset), enabled = count > 0, onClick = { confirmResetCount = true })
                 }
+            }
+
+            val context = LocalContext.current
+            val display = draft.timeDisplay ?: TimeClickerTheme.settings.timeDisplay
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                SectionLabel(stringResource(R.string.settings_time_display))
+                TimeDisplayPicker(
+                    selected = display,
+                    onSelect = { draft = draft.copy(timeDisplay = it) },
+                    info = tileTimeInfo(
+                        context, display,
+                        at = if (saved.hasPressed) saved.lastDoneAt else saved.createdAt,
+                        pressed = saved.hasPressed,
+                    ),
+                )
             }
 
             ReminderSection(reminder = draft.reminder, rhythm = rhythm, onChange = { draft = draft.copy(reminder = it) })
@@ -338,13 +367,22 @@ fun EditTileSheet(
         }
     }
 
+    pickingColor?.let { start ->
+        CustomColorDialog(
+            initial = start,
+            preview = { color -> TilePreview(saved, draft.copy(color = color, photo = null), photoFile) },
+            onConfirm = { pickingColor = null; draft = draft.copy(color = it) },
+            onDismiss = { pickingColor = null },
+        )
+    }
     if (newGroupDialog) {
-        NameDialog(
+        GroupDialog(
             title = stringResource(R.string.dialog_new_group_title),
             initialName = "",
-            onConfirm = { name ->
+            initialIcon = TileIcon.NONE,
+            onConfirm = { name, icon ->
                 newGroupDialog = false
-                scope.launch { draft = draft.copy(groupId = createGroup(name)) }
+                scope.launch { draft = draft.copy(groupId = createGroup(name, icon)) }
             },
             onDismiss = { newGroupDialog = false },
         )
@@ -356,6 +394,7 @@ fun EditTileSheet(
             confirmLabel = stringResource(R.string.counter_reset),
             onConfirm = {
                 confirmResetCount = false
+                redoStack.clear()
                 draft = draft.copy(resetCount = true)
             },
             onDismiss = { confirmResetCount = false },
@@ -373,6 +412,32 @@ fun EditTileSheet(
             onDismiss = { confirmDelete = false },
         )
     }
+}
+
+/** The tile as it will look once saved, at the small size. */
+@Composable
+private fun TilePreview(saved: Tracker, draft: TileDraft, photoFile: (String) -> File) {
+    TileCard(
+        tracker = Tracker(
+            id = saved.id,
+            name = draft.name.ifBlank { stringResource(R.string.tile_preview_name) },
+            lastDoneAt = saved.lastDoneAt,
+            groupId = draft.groupId,
+            color = draft.color,
+            icon = draft.icon,
+            size = TileSize.SMALL,
+            photo = draft.photo,
+            pressCount = if (draft.resetCount) 0 else saved.pressCount,
+            reminder = draft.reminder,
+            createdAt = saved.createdAt,
+            timeDisplay = draft.timeDisplay,
+        ),
+        photoFile = photoFile,
+        onClick = {},
+        onLongClick = null,
+        enabled = false,
+        modifier = Modifier.size(width = 150.dp, height = 156.dp),
+    )
 }
 
 @Composable
@@ -437,10 +502,11 @@ private fun PhotoRow(file: File, onChange: () -> Unit, onRemove: () -> Unit) {
 
 /** A small raised button on the sheet. */
 @Composable
-internal fun SheetButton(text: String, onClick: () -> Unit) {
+internal fun SheetButton(text: String, enabled: Boolean = true, onClick: () -> Unit) {
     val palette = TimeClickerTheme.palette
     NeuButton(
         onClick = onClick,
+        enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         background = palette.sheet,
         distance = 4.dp,
@@ -453,10 +519,11 @@ internal fun SheetButton(text: String, onClick: () -> Unit) {
 
 /** A [SheetButton] with an icon instead of text. */
 @Composable
-private fun SheetIconButton(icon: ImageVector, contentDescription: String, onClick: () -> Unit) {
+private fun SheetIconButton(icon: ImageVector, contentDescription: String, enabled: Boolean, onClick: () -> Unit) {
     val palette = TimeClickerTheme.palette
     NeuButton(
         onClick = onClick,
+        enabled = enabled,
         shape = RoundedCornerShape(12.dp),
         background = palette.sheet,
         distance = 4.dp,
@@ -467,11 +534,23 @@ private fun SheetIconButton(icon: ImageVector, contentDescription: String, onCli
     }
 }
 
-/** The pastel colours, in rows of six cells the same size as the icon picker's. */
+/**
+ * The pastel colours, in rows of six cells the same size as the icon picker's. The last row ends with a custom colour
+ * and the eyedropper opening [CustomColorDialog]. That custom cell holds the tile's colour when it isn't a preset on
+ * offer (a custom colour, or one no longer offered), else the custom colour last given to a tile.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ColourSwatches(selected: TileColor, onSelect: (TileColor) -> Unit) {
-    val choices = TileColor.pickable
+private fun ColourSwatches(
+    selected: TileColor,
+    original: TileColor,
+    onSelect: (TileColor) -> Unit,
+    onPickCustom: (start: CustomColor) -> Unit,
+) {
+    val palette = TimeClickerTheme.palette
+    val lastCustom = TimeClickerTheme.settings.lastCustomColor ?: CustomColor.DEFAULT
+    val extra = listOf(selected, original).firstOrNull { it !in PresetColor.pickable } ?: lastCustom
+    val choices = PresetColor.pickable + extra
     FlowRow(
         Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(PickerGap),
@@ -480,7 +559,7 @@ private fun ColourSwatches(selected: TileColor, onSelect: (TileColor) -> Unit) {
     ) {
         choices.forEach { color ->
             val isSelected = color == selected
-            val colors = TimeClickerTheme.palette.tile(color)
+            val colors = palette.tile(color)
             val name = stringResource(colorName(color))
             Box(
                 Modifier
@@ -493,7 +572,21 @@ private fun ColourSwatches(selected: TileColor, onSelect: (TileColor) -> Unit) {
                     .semantics { contentDescription = name },
             )
         }
-        repeat((PickerColumns - choices.size % PickerColumns) % PickerColumns) { Spacer(Modifier.weight(1f)) }
+        val chooseLabel = stringResource(R.string.color_custom_choose)
+        Box(
+            Modifier
+                .weight(1f)
+                .height(PickerCellHeight)
+                .clip(PickerCellShape)
+                .background(palette.field)
+                .clickable(role = Role.Button, onClickLabel = chooseLabel) {
+                    onPickCustom(selected as? CustomColor ?: extra as? CustomColor ?: lastCustom)
+                }
+                .semantics { contentDescription = chooseLabel },
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(AppIcons.Eyedropper, null, tint = palette.text, modifier = Modifier.size(22.dp))
+        }
     }
 }
 
@@ -582,20 +675,32 @@ private val PickerGap = 8.dp
 private val PickerCellHeight = 46.dp
 private val PickerCellShape = RoundedCornerShape(14.dp)
 
+/** Tiny shape previewing a tile size: a square, a horizontal bar or a vertical bar. */
+@Composable
+private fun TileSizeGlyph(size: TileSize, color: Color) {
+    val (width, height) = when (size) {
+        TileSize.SMALL -> 12.dp to 12.dp
+        TileSize.WIDE -> 18.dp to 8.dp
+        TileSize.TALL -> 8.dp to 18.dp
+    }
+    Box(Modifier.size(width, height).clip(RoundedCornerShape(3.dp)).background(color))
+}
+
 private fun colorName(color: TileColor) = when (color) {
-    TileColor.SAGE -> R.string.color_sage
-    TileColor.LAVENDER -> R.string.color_lavender
-    TileColor.PEACH -> R.string.color_peach
-    TileColor.SKY -> R.string.color_sky
-    TileColor.BUTTER -> R.string.color_butter
-    TileColor.ROSE -> R.string.color_rose
-    TileColor.TEAL -> R.string.color_teal
-    TileColor.ORCHID -> R.string.color_orchid
-    TileColor.CORAL -> R.string.color_coral
-    TileColor.SLATE -> R.string.color_slate
-    TileColor.LIME -> R.string.color_lime
-    TileColor.SAND -> R.string.color_sand
-    TileColor.PRIMARY -> R.string.color_system_primary
-    TileColor.SECONDARY -> R.string.color_system_secondary
-    TileColor.TERTIARY -> R.string.color_system_tertiary
+    is CustomColor -> R.string.color_custom
+    PresetColor.SAGE -> R.string.color_sage
+    PresetColor.LAVENDER -> R.string.color_lavender
+    PresetColor.PEACH -> R.string.color_peach
+    PresetColor.SKY -> R.string.color_sky
+    PresetColor.BUTTER -> R.string.color_butter
+    PresetColor.ROSE -> R.string.color_rose
+    PresetColor.TEAL -> R.string.color_teal
+    PresetColor.ORCHID -> R.string.color_orchid
+    PresetColor.CORAL -> R.string.color_coral
+    PresetColor.SLATE -> R.string.color_slate
+    PresetColor.LIME -> R.string.color_lime
+    PresetColor.SAND -> R.string.color_sand
+    PresetColor.PRIMARY -> R.string.color_system_primary
+    PresetColor.SECONDARY -> R.string.color_system_secondary
+    PresetColor.TERTIARY -> R.string.color_system_tertiary
 }

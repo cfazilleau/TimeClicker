@@ -51,7 +51,8 @@ interface TrackerDao {
         """
         UPDATE trackers
         SET name = :name, group_id = :groupId, color = :color, icon = :icon, size = :size, photo = :photo,
-            reminder_every = :reminderEvery, reminder_unit = :reminderUnit
+            reminder_every = :reminderEvery, reminder_unit = :reminderUnit,
+            time_display = :timeDisplay
         WHERE id = :id
         """
     )
@@ -65,6 +66,7 @@ interface TrackerDao {
         photo: String?,
         reminderEvery: Int?,
         reminderUnit: String?,
+        timeDisplay: String?,
     )
 
     @Query("DELETE FROM trackers WHERE id = :id")
@@ -93,6 +95,19 @@ interface TrackerDao {
             .forEachIndexed { index, id -> setTrackerPosition(id, index) }
     }
 
+    @Query("UPDATE trackers SET group_id = :groupId WHERE id = :id")
+    suspend fun setTrackerGroup(id: Long, groupId: Long?)
+
+    /**
+     * Files the tracker in [groupId] (null: no group), which then holds [orderedIds] in that order
+     * (see [reorderTrackers]); the group it left keeps its order.
+     */
+    @Transaction
+    suspend fun moveTracker(id: Long, groupId: Long?, orderedIds: List<Long>) {
+        setTrackerGroup(id, groupId)
+        reorderTrackers(orderedIds)
+    }
+
     @Query("SELECT photo FROM trackers WHERE photo IS NOT NULL")
     suspend fun photoNames(): List<String>
 
@@ -108,18 +123,34 @@ interface TrackerDao {
     @Query("SELECT done_at FROM tracker_events WHERE tracker_id = :trackerId ORDER BY done_at DESC LIMIT :limit")
     suspend fun recentEventTimes(trackerId: Long, limit: Int): List<Long>
 
-    /** Deletes the tracker's latest event counted by its press counter. Returns how many were deleted: 0 or 1. */
+    /** Presses at or after [since] (millis), oldest first; a tracker's creation event is not a press. */
     @Query(
         """
-        DELETE FROM tracker_events WHERE id = (
-            SELECT e.id FROM tracker_events e JOIN trackers t ON t.id = e.tracker_id
-            WHERE e.tracker_id = :trackerId AND e.done_at > t.count_since
-            ORDER BY e.done_at DESC, e.id DESC
-            LIMIT 1
-        )
+        SELECT e.tracker_id, e.id, e.done_at FROM tracker_events e JOIN trackers t ON t.id = e.tracker_id
+        WHERE e.done_at >= :since AND e.done_at > t.created_at
+        ORDER BY e.done_at, e.id
         """
     )
-    suspend fun deleteLastCountedEvent(trackerId: Long): Int
+    suspend fun eventsSince(since: Long): List<RecentPress>
+
+    /** The tracker's latest event counted by its press counter. */
+    @Query(
+        """
+        SELECT e.* FROM tracker_events e JOIN trackers t ON t.id = e.tracker_id
+        WHERE e.tracker_id = :trackerId AND e.done_at > t.count_since
+        ORDER BY e.done_at DESC, e.id DESC
+        LIMIT 1
+        """
+    )
+    suspend fun lastCountedEvent(trackerId: Long): TrackerEventEntity?
+
+    /** Deletes the tracker's latest event counted by its press counter. Returns its time, null if there was none. */
+    @Transaction
+    suspend fun deleteLastCountedEvent(trackerId: Long): Long? {
+        val event = lastCountedEvent(trackerId) ?: return null
+        deleteEvent(event.id)
+        return event.doneAt
+    }
 
     // --- Groups ---
 
@@ -133,11 +164,11 @@ interface TrackerDao {
     suspend fun nextGroupPosition(): Int
 
     @Transaction
-    suspend fun createGroup(name: String): Long =
-        insertGroup(GroupEntity(name = name, position = nextGroupPosition()))
+    suspend fun createGroup(name: String, icon: String): Long =
+        insertGroup(GroupEntity(name = name, position = nextGroupPosition(), icon = icon))
 
-    @Query("UPDATE tracker_groups SET name = :name WHERE id = :id")
-    suspend fun renameGroup(id: Long, name: String)
+    @Query("UPDATE tracker_groups SET name = :name, icon = :icon WHERE id = :id")
+    suspend fun updateGroup(id: Long, name: String, icon: String)
 
     @Query("DELETE FROM tracker_groups WHERE id = :id")
     suspend fun deleteGroup(id: Long)

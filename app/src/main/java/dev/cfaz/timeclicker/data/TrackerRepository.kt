@@ -42,6 +42,7 @@ class TrackerRepository(
                 photo = spec.photo,
                 reminderEvery = spec.reminder?.every,
                 reminderUnit = spec.reminder?.unitKey,
+                timeDisplay = spec.timeDisplay?.key,
             )
         )
         cleanUpPhotos()
@@ -51,7 +52,7 @@ class TrackerRepository(
     suspend fun updateTracker(trackerId: Long, spec: TileSpec) {
         dao.updateTracker(
             trackerId, spec.name, spec.groupId, spec.color.key, spec.icon.key, spec.size.key, spec.photo,
-            spec.reminder?.every, spec.reminder?.unitKey,
+            spec.reminder?.every, spec.reminder?.unitKey, spec.timeDisplay?.key,
         )
         cleanUpPhotos()
     }
@@ -64,6 +65,10 @@ class TrackerRepository(
     /** Reorders some trackers among themselves, e.g. one group's; the others don't move. */
     suspend fun reorderTrackers(orderedIds: List<Long>) = dao.reorderTrackers(orderedIds)
 
+    /** Moves a tracker to another group (null: none), which then holds [orderedIds] in that order. */
+    suspend fun moveTracker(trackerId: Long, groupId: Long?, orderedIds: List<Long>) =
+        dao.moveTracker(trackerId, groupId, orderedIds)
+
     /** How often the tracker is usually done, from its recent history; null when it isn't regular. */
     suspend fun rhythm(trackerId: Long): Rhythm? =
         Rhythm.of(dao.recentEventTimes(trackerId, Rhythm.EVENTS_USED).map(Instant::ofEpochMilli))
@@ -72,13 +77,24 @@ class TrackerRepository(
     suspend fun markDone(trackerId: Long): Long =
         dao.insertEvent(TrackerEventEntity(trackerId = trackerId, doneAt = clock.millis()))
 
+    /** Each tracker's latest press made within the last [windowMs], with its age in millis, by tracker id. */
+    suspend fun recentPresses(windowMs: Long): Map<Long, Pair<Long, Long>> {
+        val now = clock.millis()
+        return dao.eventsSince(now - windowMs).associate { it.trackerId to (it.id to (now - it.doneAt).coerceAtLeast(0)) }
+    }
+
     suspend fun undoMarkDone(eventId: Long) = dao.deleteEvent(eventId)
 
     /**
      * Deletes the tracker's last press counted by its counter; the tile's creation, and presses before a counter
-     * reset, are kept. False if there was none.
+     * reset, are kept. Returns the deleted press's time, usable with [restorePress]; null if there was none.
      */
-    suspend fun revertLastPress(trackerId: Long): Boolean = dao.deleteLastCountedEvent(trackerId) > 0
+    suspend fun revertLastPress(trackerId: Long): Long? = dao.deleteLastCountedEvent(trackerId)
+
+    /** Puts back a press deleted by [revertLastPress], at its original time. */
+    suspend fun restorePress(trackerId: Long, doneAt: Long) {
+        dao.insertEvent(TrackerEventEntity(trackerId = trackerId, doneAt = doneAt))
+    }
 
     // --- Photos ---
 
@@ -91,16 +107,16 @@ class TrackerRepository(
 
     // --- Groups ---
 
-    suspend fun createGroup(name: String): Long = dao.createGroup(name)
+    suspend fun createGroup(name: String, icon: TileIcon = TileIcon.NONE): Long = dao.createGroup(name, icon.key)
 
-    suspend fun renameGroup(groupId: Long, name: String) = dao.renameGroup(groupId, name)
+    suspend fun updateGroup(groupId: Long, name: String, icon: TileIcon) = dao.updateGroup(groupId, name, icon.key)
 
     suspend fun deleteGroup(groupId: Long) = dao.deleteGroup(groupId)
 
     suspend fun reorderGroups(orderedIds: List<Long>) = dao.reorderGroups(orderedIds)
 }
 
-private fun GroupEntity.toModel() = TrackerGroup(id, name)
+private fun GroupEntity.toModel() = TrackerGroup(id, name, TileIcon.fromKey(icon))
 
 private fun TrackerWithLastDone.toModel() = Tracker(
     id = tracker.id,
@@ -113,4 +129,6 @@ private fun TrackerWithLastDone.toModel() = Tracker(
     photo = tracker.photo,
     pressCount = pressCount,
     reminder = Reminder.fromColumns(tracker.reminderEvery, tracker.reminderUnit),
+    createdAt = Instant.ofEpochMilli(tracker.createdAt),
+    timeDisplay = tracker.timeDisplay?.let(TimeDisplay::fromKey),
 )

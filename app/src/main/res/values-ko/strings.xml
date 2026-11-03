@@ -120,6 +120,13 @@
     <string name="color_system_primary">시스템 강조색</string>
     <string name="color_system_secondary">시스템 부드러운 색</string>
     <string name="color_system_tertiary">시스템 대비색</string>
+    <string name="color_custom">사용자 지정 색</string>
+    <string name="color_custom_choose">사용자 지정 색 선택</string>
+    <string name="color_hue">색조</string>
+    <string name="color_level_light">밝게</string>
+    <string name="color_level_natural">자연스럽게</string>
+    <string name="color_level_dark">어둡게</string>
+    <string name="color_custom_confirm">이 색 사용</string>
     <string name="icon_choice">아이콘: %1$s</string>
     <string name="icon_all">모든 아이콘</string>
     <string name="icon_chooser_title">아이콘 선택</string>
@@ -264,7 +271,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">타일 순서 바꾸기</string>
-    <string name="reorder_hint">타일을 길게 누른 다음 새 위치로 드래그하세요.</string>
+    <string name="reorder_hint">타일을 새 위치나 다른 그룹으로 드래그하세요.</string>
 
     <!-- About -->
     <string name="about_title">앱 정보</string>

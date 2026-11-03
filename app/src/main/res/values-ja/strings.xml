@@ -120,6 +120,13 @@
     <string name="color_system_primary">システムのアクセント</string>
     <string name="color_system_secondary">システムのソフト</string>
     <string name="color_system_tertiary">システムのコントラスト</string>
+    <string name="color_custom">カスタムカラー</string>
+    <string name="color_custom_choose">カスタムカラーを選ぶ</string>
+    <string name="color_hue">色相</string>
+    <string name="color_level_light">明るい</string>
+    <string name="color_level_natural">ナチュラル</string>
+    <string name="color_level_dark">暗い</string>
+    <string name="color_custom_confirm">この色にする</string>
     <string name="icon_choice">アイコン: %1$s</string>
     <string name="icon_all">すべてのアイコン</string>
     <string name="icon_chooser_title">アイコンを選択</string>
@@ -264,7 +271,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">タイルを並べ替え</string>
-    <string name="reorder_hint">タイルを長押しして、新しい位置までドラッグします。</string>
+    <string name="reorder_hint">タイルを新しい位置や別のグループまでドラッグします。</string>
 
     <!-- About -->
     <string name="about_title">このアプリについて</string>

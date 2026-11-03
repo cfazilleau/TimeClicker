@@ -134,6 +134,13 @@
     <string name="color_system_primary">Destaque do sistema</string>
     <string name="color_system_secondary">Tom suave do sistema</string>
     <string name="color_system_tertiary">Contraste do sistema</string>
+    <string name="color_custom">Cor personalizada</string>
+    <string name="color_custom_choose">Escolher uma cor personalizada</string>
+    <string name="color_hue">Matiz</string>
+    <string name="color_level_light">Claro</string>
+    <string name="color_level_natural">Natural</string>
+    <string name="color_level_dark">Escuro</string>
+    <string name="color_custom_confirm">Usar cor</string>
     <string name="icon_choice">Ícone: %1$s</string>
     <string name="icon_all">Todos os ícones</string>
     <string name="icon_chooser_title">Escolha um ícone</string>
@@ -280,7 +287,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Reordenar cards</string>
-    <string name="reorder_hint">Toque e segure um card, depois arraste-o para o novo lugar.</string>
+    <string name="reorder_hint">Arraste um card para o novo lugar ou para outro grupo.</string>
 
     <!-- About -->
     <string name="about_title">Sobre</string>

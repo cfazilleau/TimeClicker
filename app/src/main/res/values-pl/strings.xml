@@ -141,6 +141,13 @@
     <string name="color_system_primary">System: akcent</string>
     <string name="color_system_secondary">System: łagodny</string>
     <string name="color_system_tertiary">System: kontrast</string>
+    <string name="color_custom">Własny kolor</string>
+    <string name="color_custom_choose">Wybierz własny kolor</string>
+    <string name="color_hue">Odcień</string>
+    <string name="color_level_light">Jasny</string>
+    <string name="color_level_natural">Naturalny</string>
+    <string name="color_level_dark">Ciemny</string>
+    <string name="color_custom_confirm">Użyj koloru</string>
     <string name="icon_choice">Ikona: %1$s</string>
     <string name="icon_all">Wszystkie ikony</string>
     <string name="icon_chooser_title">Wybierz ikonę</string>
@@ -288,7 +295,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Zmień kolejność kafelków</string>
-    <string name="reorder_hint">Przytrzymaj kafelek, a potem przeciągnij go na nowe miejsce.</string>
+    <string name="reorder_hint">Przeciągnij kafelek na nowe miejsce lub do innej grupy.</string>
 
     <!-- About -->
     <string name="about_title">O aplikacji</string>

@@ -118,7 +118,13 @@ class BackupRepository(
         val iconFromKey: (String?) -> TileIcon = if (version < 2) TileIcon.Companion::fromLegacyKey else TileIcon.Companion::fromKey
 
         val groups = json.getJSONArray("groups").objects().map {
-            GroupEntity(id = it.getLong("id"), name = it.getString("name"), position = it.getInt("position"))
+            // Older backups have no group icons.
+            GroupEntity(
+                id = it.getLong("id"),
+                name = it.getString("name"),
+                position = it.getInt("position"),
+                icon = it.optStringOrNull("icon") ?: TileIcon.NONE.key,
+            )
         }
         val groupIds = groups.map { it.id }.toSet()
         val trackers = json.getJSONArray("trackers").objects().map {
@@ -134,6 +140,7 @@ class BackupRepository(
                 size = TileSize.fromKey(it.optString("size")).key,
                 photo = it.optStringOrNull("photo")?.takeIf { name -> SafeName.matches(name) },
                 countSince = it.optLong("countSince", createdAt),
+                timeDisplay = it.optStringOrNull("timeDisplay")?.let { key -> TimeDisplay.fromKey(key).key },
             ).withReminder(Reminder.fromColumns(it.optIntOrNull("reminderEvery"), it.optStringOrNull("reminderUnit")))
         }
         val trackerIds = trackers.map { it.id }.toSet()
@@ -153,6 +160,7 @@ class BackupRepository(
         .put(SettingsRepository.SHOW_COUNTER, s.showCounter)
         .put(SettingsRepository.ICON_PALETTE, SettingsRepository.paletteToKeys(s.iconPalette))
         .put(SettingsRepository.RECENT_ICONS, SettingsRepository.paletteToKeys(s.recentIcons))
+        .put(SettingsRepository.LAST_CUSTOM_COLOR, s.lastCustomColor?.key ?: JSONObject.NULL)
 
     /** Missing keys keep their default. */
     private fun settingsFromJson(json: JSONObject): AppSettings {
@@ -168,6 +176,7 @@ class BackupRepository(
                 ?.let { SettingsRepository.paletteFromKeys(it) } ?: d.iconPalette,
             recentIcons = json.optStringOrNull(SettingsRepository.RECENT_ICONS)
                 ?.let { SettingsRepository.paletteFromKeys(it) } ?: d.recentIcons,
+            lastCustomColor = CustomColor.fromKey(json.optStringOrNull(SettingsRepository.LAST_CUSTOM_COLOR)),
         )
     }
 
@@ -181,7 +190,7 @@ class BackupRepository(
     }
 }
 
-private fun GroupEntity.toJson() = JSONObject().put("id", id).put("name", name).put("position", position)
+private fun GroupEntity.toJson() = JSONObject().put("id", id).put("name", name).put("position", position).put("icon", icon)
 
 private fun TrackerEntity.toJson() = JSONObject()
     .put("id", id)
@@ -196,6 +205,7 @@ private fun TrackerEntity.toJson() = JSONObject()
     .put("countSince", countSince)
     .put("reminderEvery", reminderEvery ?: JSONObject.NULL)
     .put("reminderUnit", reminderUnit ?: JSONObject.NULL)
+    .put("timeDisplay", timeDisplay ?: JSONObject.NULL)
 
 /** Older backups have no reminder fields: their tiles get none. */
 private fun TrackerEntity.withReminder(reminder: Reminder?) =

@@ -18,13 +18,17 @@ import dev.cfaz.timeclicker.data.TileIcon
  */
 @Database(
     entities = [GroupEntity::class, TrackerEntity::class, TrackerEventEntity::class],
-    version = 5,
+    version = 7,
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 1, to = 2, spec = AppDatabase.Migration1To2::class),
         AutoMigration(from = 2, to = 3, spec = AppDatabase.Migration2To3::class),
         // v5 adds tile reminders, off for existing tiles.
         AutoMigration(from = 4, to = 5),
+        // v6 adds the per-tile time display, following the app setting for existing tiles.
+        AutoMigration(from = 5, to = 6),
+        // v7 adds group icons, none for existing groups.
+        AutoMigration(from = 6, to = 7),
     ],
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -33,7 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     /** v2 adds groups and tile styling. Existing trackers get the colours in turn, like new ones. */
     class Migration1To2 : AutoMigrationSpec {
         override fun onPostMigrate(db: SupportSQLiteDatabase) {
-            // Same order as TileColor.entries.
+            // Same order as PresetColor.entries.
             db.execSQL(
                 """
                 UPDATE trackers SET color = CASE ((SELECT COUNT(*) FROM trackers t2 WHERE t2.position < trackers.position OR (t2.position = trackers.position AND t2.id < trackers.id)) % 6)

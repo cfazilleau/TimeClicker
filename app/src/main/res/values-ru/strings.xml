@@ -141,6 +141,13 @@
     <string name="color_system_primary">Система: акцент</string>
     <string name="color_system_secondary">Система: мягкий</string>
     <string name="color_system_tertiary">Система: контраст</string>
+    <string name="color_custom">Свой цвет</string>
+    <string name="color_custom_choose">Выбрать свой цвет</string>
+    <string name="color_hue">Оттенок</string>
+    <string name="color_level_light">Светлый</string>
+    <string name="color_level_natural">Естественный</string>
+    <string name="color_level_dark">Тёмный</string>
+    <string name="color_custom_confirm">Применить</string>
     <string name="icon_choice">Значок: %1$s</string>
     <string name="icon_all">Все значки</string>
     <string name="icon_chooser_title">Выберите значок</string>
@@ -288,7 +295,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Изменить порядок плиток</string>
-    <string name="reorder_hint">Удерживайте плитку, затем перетащите её на новое место.</string>
+    <string name="reorder_hint">Перетащите плитку на новое место или в другую группу.</string>
 
     <!-- About -->
     <string name="about_title">О приложении</string>
