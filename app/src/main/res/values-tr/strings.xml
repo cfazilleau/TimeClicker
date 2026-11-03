@@ -272,7 +272,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Kutucukları sırala</string>
-    <string name="reorder_hint">Bir kutucuğu basılı tutun, ardından yeni yerine sürükleyin.</string>
+    <string name="reorder_hint">Bir kutucuğu yeni yerine veya başka bir gruba sürükleyin.</string>
 
     <!-- About -->
     <string name="about_title">Hakkında</string>

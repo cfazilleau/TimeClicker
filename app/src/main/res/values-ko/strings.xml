@@ -264,7 +264,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">타일 순서 바꾸기</string>
-    <string name="reorder_hint">타일을 길게 누른 다음 새 위치로 드래그하세요.</string>
+    <string name="reorder_hint">타일을 새 위치나 다른 그룹으로 드래그하세요.</string>
 
     <!-- About -->
     <string name="about_title">앱 정보</string>

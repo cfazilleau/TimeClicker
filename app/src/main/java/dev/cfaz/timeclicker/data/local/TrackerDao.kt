@@ -95,6 +95,19 @@ interface TrackerDao {
             .forEachIndexed { index, id -> setTrackerPosition(id, index) }
     }
 
+    @Query("UPDATE trackers SET group_id = :groupId WHERE id = :id")
+    suspend fun setTrackerGroup(id: Long, groupId: Long?)
+
+    /**
+     * Files the tracker in [groupId] (null: no group), which then holds [orderedIds] in that order
+     * (see [reorderTrackers]); the group it left keeps its order.
+     */
+    @Transaction
+    suspend fun moveTracker(id: Long, groupId: Long?, orderedIds: List<Long>) {
+        setTrackerGroup(id, groupId)
+        reorderTrackers(orderedIds)
+    }
+
     @Query("SELECT photo FROM trackers WHERE photo IS NOT NULL")
     suspend fun photoNames(): List<String>
 

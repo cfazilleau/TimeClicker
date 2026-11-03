@@ -98,4 +98,23 @@ class BentoTest {
     fun draggedTileMovesToTheThirdColumnOnAWiderGrid() {
         assertEquals(2, Bento.dropIndex(listOf(SMALL, SMALL, SMALL), from = 0, x = 2.5f, y = 0.5f, columnCount = 3))
     }
+
+    @Test
+    fun tileFromAnotherGroupGoesUnderTheFinger() {
+        // Beside the first tile, then on the next row.
+        assertEquals(1, Bento.insertIndex(listOf(SMALL, SMALL), SMALL, x = 1.5f, y = 0.5f))
+        assertEquals(2, Bento.insertIndex(listOf(SMALL, SMALL), SMALL, x = 0.5f, y = 1.5f))
+        assertEquals(0, Bento.insertIndex(listOf(SMALL, SMALL), SMALL, x = 0.5f, y = 0.5f))
+    }
+
+    @Test
+    fun tileFromAnotherGroupGoesFirstOverTheHeadingAndLastBelowTheTiles() {
+        assertEquals(0, Bento.insertIndex(listOf(SMALL, SMALL, SMALL), SMALL, x = 1.5f, y = -0.3f))
+        assertEquals(3, Bento.insertIndex(listOf(SMALL, SMALL, SMALL), WIDE, x = 1.5f, y = 4f))
+    }
+
+    @Test
+    fun tileDroppedOnAnEmptyGroupIsItsOnlyOne() {
+        assertEquals(0, Bento.insertIndex(emptyList(), TALL, x = 0f, y = -1f))
+    }
 }

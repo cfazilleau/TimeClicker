@@ -304,7 +304,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">إعادة ترتيب البطاقات</string>
-    <string name="reorder_hint">اضغط مطولًا على بطاقة، ثم اسحبها إلى مكانها الجديد.</string>
+    <string name="reorder_hint">اسحب بطاقة إلى مكانها الجديد أو إلى مجموعة أخرى.</string>
 
     <!-- About -->
     <string name="about_title">حول التطبيق</string>

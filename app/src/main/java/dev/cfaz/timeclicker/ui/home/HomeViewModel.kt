@@ -47,7 +47,17 @@ sealed interface SectionTitle {
     data object None : SectionTitle
 }
 
-data class SectionUi(val key: String, val title: SectionTitle, val trackers: List<Tracker>)
+/**
+ * One group's tiles on a page ([groupId] null: tiles without a group).
+ * An [onlyWhileReordering] section is empty and only shown in reorder mode, as a place to drop tiles.
+ */
+data class SectionUi(
+    val key: String,
+    val title: SectionTitle,
+    val groupId: Long?,
+    val trackers: List<Tracker>,
+    val onlyWhileReordering: Boolean = false,
+)
 
 /** One swipeable page of the home screen: what one chip shows. */
 data class PageUi(val chip: FilterChipUi, val sections: List<SectionUi>)
@@ -126,6 +136,17 @@ class HomeViewModel(
         viewModelScope.launch { repository.reorderTrackers(orderedIds) }
     }
 
+    /** A tile dragged into the section of [groupId] (null: no group), which then holds [orderedIds] in that order. */
+    fun move(trackerId: Long, groupId: Long?, orderedIds: List<Long>) {
+        viewModelScope.launch { repository.moveTracker(trackerId, groupId, orderedIds) }
+    }
+
+    /** A tile dropped on a group's chip, or moved from the accessibility actions: it goes last in that group. */
+    fun moveToGroup(trackerId: Long, groupId: Long?) {
+        val trackers = state.value?.trackers ?: return
+        move(trackerId, groupId, trackers.filter { it.groupId == groupId && it.id != trackerId }.map { it.id } + trackerId)
+    }
+
     suspend fun createGroup(name: String, icon: TileIcon): Long = repository.createGroup(name.trim(), icon)
 
     fun updateGroup(group: TrackerGroup, name: String, icon: TileIcon) {
@@ -150,21 +171,27 @@ class HomeViewModel(
 
         val pages = buildList {
             // Tiles without a group only show on All, first and without a heading, so they don't read as part of a group.
+            // Empty sections only show while reordering, as places to drop a tile into (or out of a group).
             val all = buildList {
-                if (ungrouped.isNotEmpty()) add(SectionUi("ungrouped", SectionTitle.None, ungrouped))
+                if (ungrouped.isNotEmpty() || groups.isNotEmpty()) {
+                    add(SectionUi("ungrouped", SectionTitle.None, null, ungrouped, onlyWhileReordering = ungrouped.isEmpty()))
+                }
                 groups.forEach { g ->
-                    byGroup[g.id]?.let { add(SectionUi("group-${g.id}", SectionTitle.Group(g.name, g.icon), it)) }
+                    val inGroup = byGroup[g.id].orEmpty()
+                    add(SectionUi(g.sectionKey, SectionTitle.Group(g.name, g.icon), g.id, inGroup, onlyWhileReordering = inGroup.isEmpty()))
                 }
             }
             add(PageUi(FilterChipUi(GroupFilter.All, null, trackers.size), all))
             groups.forEach { g ->
                 val inGroup = byGroup[g.id].orEmpty()
-                val section = SectionUi("group-${g.id}", SectionTitle.Group(g.name, g.icon), inGroup)
+                val section = SectionUi(g.sectionKey, SectionTitle.Group(g.name, g.icon), g.id, inGroup)
                 add(PageUi(FilterChipUi(GroupFilter.Group(g.id), g.name, inGroup.size, g.icon), listOf(section)))
             }
         }
         return HomeUiState(trackers, groups, pages, current)
     }
+
+    private val TrackerGroup.sectionKey get() = "group-$id"
 
     companion object {
         val Factory = viewModelFactory {

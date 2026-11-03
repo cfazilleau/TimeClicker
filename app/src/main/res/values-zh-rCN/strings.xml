@@ -264,7 +264,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">调整卡片顺序</string>
-    <string name="reorder_hint">长按一张卡片，然后将其拖到新位置。</string>
+    <string name="reorder_hint">将卡片拖到新位置或其他分组。</string>
 
     <!-- About -->
     <string name="about_title">关于</string>

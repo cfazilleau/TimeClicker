@@ -61,6 +61,8 @@
     <!-- Accessibility actions on a tile while reordering. -->
     <string name="action_move_earlier">Move earlier</string>
     <string name="action_move_later">Move later</string>
+    <string name="action_move_to_group">Move to %1$s</string>
+    <string name="action_remove_from_group">Remove from group</string>
 
     <!-- Edit tile sheet -->
     <string name="sheet_new_title">New tile</string>
@@ -295,7 +297,10 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Reorder tiles</string>
-    <string name="reorder_hint">Hold a tile, then drag it to its new place.</string>
+    <string name="reorder_hint">Drag a tile to its new place, or onto another group.</string>
+    <string name="section_no_group">No group</string>
+    <string name="reorder_drop_here">Drop a tile here.</string>
+    <string name="reorder_drop_ungrouped">Drop a tile here to take it out of its group.</string>
 
     <!-- About -->
     <string name="about_title">About</string>

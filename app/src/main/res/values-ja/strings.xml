@@ -264,7 +264,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">タイルを並べ替え</string>
-    <string name="reorder_hint">タイルを長押しして、新しい位置までドラッグします。</string>
+    <string name="reorder_hint">タイルを新しい位置や別のグループまでドラッグします。</string>
 
     <!-- About -->
     <string name="about_title">このアプリについて</string>

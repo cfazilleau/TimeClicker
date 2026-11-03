@@ -288,7 +288,7 @@
 
     <!-- Reordering the tiles of the page shown -->
     <string name="reorder_tiles">Изменить порядок плиток</string>
-    <string name="reorder_hint">Удерживайте плитку, затем перетащите её на новое место.</string>
+    <string name="reorder_hint">Перетащите плитку на новое место или в другую группу.</string>
 
     <!-- About -->
     <string name="about_title">О приложении</string>
