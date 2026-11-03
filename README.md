@@ -14,15 +14,15 @@ Kotlin, Jetpack Compose, Room and Glance widgets; min SDK 26.
 ## Documentation
 
 The full documentation is on the [wiki](https://github.com/cfazilleau/TimeClicker/wiki), copied from
-[`docs/`](docs/Home.md) on every push to `main`:
+[`wiki/`](wiki/Home.md) on every push to `main`:
 
-- [Features](docs/Features.md): everything the app does
-- [Building](docs/Building.md): build and test locally
-- [Architecture](docs/Architecture.md): tech stack, project layout, data model, database migrations
-- [Icons](docs/Icons.md): the bundled Lucide icons and their search words
-- [Releasing](docs/Releasing.md): CI, [cutting a beta or a release](docs/Releasing.md#cutting-a-beta-or-a-release), publishing to Google Play, [release signing](docs/Releasing.md#release-signing)
+- [Features](wiki/Features.md): everything the app does
+- [Building](wiki/Building.md): build and test locally
+- [Architecture](wiki/Architecture.md): tech stack, project layout, data model, database migrations
+- [Icons](wiki/Icons.md): the bundled Lucide icons and their search words
+- [Releasing](wiki/Releasing.md): CI, [cutting a beta or a release](wiki/Releasing.md#cutting-a-beta-or-a-release), publishing to Google Play, [release signing](wiki/Releasing.md#release-signing)
 - [Store listing](tools/store/README.md): the Play Store text and screenshots
-- [Website](docs/Website.md): the `web/` folder and its privacy policy
+- [Website](wiki/Website.md): the site in `docs/` and its privacy policy
 
 ## Quick start
 
