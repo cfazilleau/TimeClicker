@@ -31,6 +31,9 @@ git tag v1.8.0 && git push origin v1.8.0
 It becomes the latest GitHub release and goes to Google Play's production track, rolled out to everyone once Google's
 review passes. A release is built again from its own tag, as a new `versionCode`.
 
+The store listing (below) is shared by every track, so only a release uploads it: a beta sends its app bundle and
+release notes, and leaves the public store page alone.
+
 The release notes list the pull requests merged since the previous tag, by title (`tools/release/changelog.py`): for a
 beta, since the previous tag of either kind; for a release, since the previous release, so they cover its betas. Label a
 pull request `skip-changelog` to leave it out (CI or docs changes, say). Google Play gets the same list in plain text,
@@ -40,11 +43,11 @@ tag, Google Play gets them as committed.
 
 ## Publishing to Google Play
 
-The `google-play` job uploads the bundle with [fastlane supply](https://docs.fastlane.tools/actions/supply/), along with
-the store listing as committed in `fastlane/metadata/android` (text, screenshots, feature graphic, release notes from
-`changelogs/default.txt`, unless replaced by generated notes, above); it doesn't regenerate it. Images already on
-Play are only sent again when they change. It runs on version tags, or from **Actions → Build and release → Run
-workflow** with a track picked (with the committed release notes).
+The `google-play` job uploads the bundle with [fastlane supply](https://docs.fastlane.tools/actions/supply/), with its
+release notes (`changelogs/default.txt` in `fastlane/metadata/android`, unless replaced by generated notes, above). On
+the production track, it also uploads the store listing as committed there (text, screenshots, feature graphic); it
+doesn't regenerate it. Images already on Play are only sent again when they change. It runs on version tags, or from
+**Actions → Build and release → Run workflow** with a track picked (with the committed release notes).
 The listing itself, and how its screenshots are made: [Store listing](https://github.com/cfazilleau/TimeClicker/blob/main/tools/store/README.md).
 
 Setup, once:

@@ -210,6 +210,11 @@ jobs:
           SUPPLY_TRACK: ${{ env.PLAY_TRACK }}
           SUPPLY_RELEASE_STATUS: ${{ env.PLAY_RELEASE_STATUS }}
           SUPPLY_METADATA_PATH: fastlane/metadata/android
+          # The store listing is shared by every track, so only a production upload sends it; testing tracks get the
+          # bundle and its release notes.
+          SUPPLY_SKIP_UPLOAD_METADATA: ${{ env.PLAY_TRACK != 'production' }}
+          SUPPLY_SKIP_UPLOAD_IMAGES: ${{ env.PLAY_TRACK != 'production' }}
+          SUPPLY_SKIP_UPLOAD_SCREENSHOTS: ${{ env.PLAY_TRACK != 'production' }}
           # Only images that changed since the last upload are sent again.
           SUPPLY_SYNC_IMAGE_UPLOAD: "true"
           SUPPLY_SKIP_UPLOAD_APK: "true"
