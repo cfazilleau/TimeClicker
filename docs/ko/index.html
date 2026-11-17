@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time Clicker: 마지막으로 한 게 언제였죠?</title>
+<meta name="description" content="어떤 일을 마지막으로 언제 했는지 기록하는 작은 Android 앱이에요. 다시 하면 타일을 누르세요.">
+<meta name="theme-color" content="#ECEEF3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1D22" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://timeclicker.cfaz.dev/ko/">
+<link rel="alternate" hreflang="en" href="https://timeclicker.cfaz.dev/">
+<link rel="alternate" hreflang="fr" href="https://timeclicker.cfaz.dev/fr/">
+<link rel="alternate" hreflang="es" href="https://timeclicker.cfaz.dev/es/">
+<link rel="alternate" hreflang="de" href="https://timeclicker.cfaz.dev/de/">
+<link rel="alternate" hreflang="it" href="https://timeclicker.cfaz.dev/it/">
+<link rel="alternate" hreflang="pt-BR" href="https://timeclicker.cfaz.dev/pt-br/">
+<link rel="alternate" hreflang="nl" href="https://timeclicker.cfaz.dev/nl/">
+<link rel="alternate" hreflang="pl" href="https://timeclicker.cfaz.dev/pl/">
+<link rel="alternate" hreflang="ru" href="https://timeclicker.cfaz.dev/ru/">
+<link rel="alternate" hreflang="tr" href="https://timeclicker.cfaz.dev/tr/">
+<link rel="alternate" hreflang="id" href="https://timeclicker.cfaz.dev/id/">
+<link rel="alternate" hreflang="ar" href="https://timeclicker.cfaz.dev/ar/">
+<link rel="alternate" hreflang="hi" href="https://timeclicker.cfaz.dev/hi/">
+<link rel="alternate" hreflang="ja" href="https://timeclicker.cfaz.dev/ja/">
+<link rel="alternate" hreflang="ko" href="https://timeclicker.cfaz.dev/ko/">
+<link rel="alternate" hreflang="zh-CN" href="https://timeclicker.cfaz.dev/zh-cn/">
+<link rel="alternate" hreflang="x-default" href="https://timeclicker.cfaz.dev/">
+<link rel="icon" href="../img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Time Clicker">
+<meta property="og:title" content="Time Clicker: 마지막으로 한 게 언제였죠?">
+<meta property="og:description" content="어떤 일을 마지막으로 언제 했는지 기록하는 작은 Android 앱이에요. 다시 하면 타일을 누르세요.">
+<meta property="og:url" content="https://timeclicker.cfaz.dev/ko/">
+<meta property="og:image" content="https://timeclicker.cfaz.dev/img/ko/og.jpg">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="500">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;700;800&family=Noto+Sans+KR:wght@500;600;700;800&amp;display=swap">
+<style>:root{--script-font:"Noto Sans KR"}</style>
+<link rel="stylesheet" href="../style.css">
+<script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+<main>
+  <header class="appbar">
+    <a class="logo" href="./"><img src="../img/icon.svg" alt="" width="48" height="48"><span>Time Clicker</span></a>
+    <details class="lang">
+      <summary class="neu-btn raised-sm" aria-label="언어"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12a10 10 0 1 0 20 0a10 10 0 1 0 -20 0zM12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0 -20M2 12h20"/></svg><span>KO</span></summary>
+      <ul class="raised">
+      <li><a href="../" hreflang="en" lang="en"><span>English</span></a></li>
+      <li><a href="../fr/" hreflang="fr" lang="fr"><span>Français</span></a></li>
+      <li><a href="../es/" hreflang="es" lang="es"><span>Español</span></a></li>
+      <li><a href="../de/" hreflang="de" lang="de"><span>Deutsch</span></a></li>
+      <li><a href="../it/" hreflang="it" lang="it"><span>Italiano</span></a></li>
+      <li><a href="../pt-br/" hreflang="pt-BR" lang="pt-BR"><span>Português (Brasil)</span></a></li>
+      <li><a href="../nl/" hreflang="nl" lang="nl"><span>Nederlands</span></a></li>
+      <li><a href="../pl/" hreflang="pl" lang="pl"><span>Polski</span></a></li>
+      <li><a href="../ru/" hreflang="ru" lang="ru"><span>Русский</span></a></li>
+      <li><a href="../tr/" hreflang="tr" lang="tr"><span>Türkçe</span></a></li>
+      <li><a href="../id/" hreflang="id" lang="id"><span>Bahasa Indonesia</span></a></li>
+      <li><a href="../ar/" hreflang="ar" lang="ar"><span>العربية</span></a></li>
+      <li><a href="../hi/" hreflang="hi" lang="hi"><span>हिन्दी</span></a></li>
+      <li><a href="../ja/" hreflang="ja" lang="ja"><span>日本語</span></a></li>
+      <li><a href="../ko/" hreflang="ko" lang="ko" aria-current="page"><span>한국어</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5 -5"/></svg></a></li>
+      <li><a href="../zh-cn/" hreflang="zh-CN" lang="zh-CN"><span>简体中文</span></a></li>
+      </ul>
+    </details>
+  </header>
+
+  <nav class="chips" aria-label="Time Clicker">
+    <a class="raised-sm" href="#features">기능</a>
+    <a class="raised-sm" href="#screenshots">스크린샷</a>
+    <a class="raised-sm" href="#download">다운로드</a>
+    <a class="raised-sm" href="../privacy.html">개인정보</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <h1>마지막으로 한 게 언제였죠?</h1>
+      <p class="intro">각 타일에는 마지막으로 그 일을 한 뒤로 얼마나 지났는지가 실시간으로 표시돼요. 다시 하면 타일을 누르세요.</p>
+      <button class="tile sage demo" type="button" data-undo="다시 누르면 실행 취소">
+        <span class="top"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 9.536V7a4 4 0 0 1 4 -4h1.5a.5 .5 0 0 1 .5 .5V5a4 4 0 0 1 -4 4 4 4 0 0 0 -4 4c0 2 1 3 1 5a5 5 0 0 1 -1 3M4 9a5 5 0 0 1 8 4 5 5 0 0 1 -8 -4M5 21h14"/></svg></span><span class="ring"><svg class="arc" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="17" pathLength="100"/></svg><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5 -5M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1 -5.5 5.5H11"/></svg></span></span>
+        <span class="name">이 페이지 열기</span>
+        <span class="when"></span>
+        <span class="bottom"><span class="hint">타일을 눌러 보세요.</span><span class="count">1</span></span>
+      </button>
+      <div class="get"><a class="play-badge" href="https://play.google.com/store/apps/details?id=dev.cfaz.timeclicker&amp;hl=ko"><img alt="Google Play에서 다운로드하기" src="https://play.google.com/intl/ko/badges/static/images/badges/ko_badge_web_generic.png" height="64"></a></div>
+    </div>
+    <picture class="phone"><source srcset="../img/ko/hero-dark.webp" media="(prefers-color-scheme: dark)"><img src="../img/ko/hero.webp" width="760" height="1312" alt="Time Clicker 메인 화면: 각 일을 한 뒤로 얼마나 지났는지 보여 주는 타일"></picture>
+  </div>
+
+  <section id="features">
+    <h2>기능</h2>
+    <div class="features">
+      <div class="tile sage wide"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4.1L12 6M5.1 8l-2.9 -.8M6 12l-1.9 2M7.2 2.2L8 5.1M9.037 9.69a.498 .498 0 0 1 .653 -.653l11 4.5a.5 .5 0 0 1 -.074 .949l-4.349 1.041a1 1 0 0 0 -.74 .739l-1.04 4.35a.5 .5 0 0 1 -.95 .074z"/></svg></span><h3>한 번만 누르면 끝</h3><p>타일을 누르면 완료로 기록돼요. 잘못 눌렀나요? 10초 안에 다시 누르면 실행 취소돼요.</p></div>
+      <div class="tile lavender"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 5a2 2 0 0 1 2 2v7a2 2 0 0 1 -2 2H9a2 2 0 0 1 -2 -2V5a2 2 0 0 1 2 -2h2.5a1.5 1.5 0 0 1 1.2 .6l.6 .8a1.5 1.5 0 0 0 1.2 .6zM3 8.268a2 2 0 0 0 -1 1.738V19a2 2 0 0 0 2 2h11a2 2 0 0 0 1.732 -1"/></svg></span><h3>그룹</h3><p>타일을 집, 건강, 반려동물 같은 그룹으로 나누고 스와이프로 오가세요.</p></div>
+      <div class="tile peach"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74 -1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499 -1.411 5.956 -2.738 7.326"/></svg></span><h3>알림</h3><p>한동안 하지 않은 일이 있으면 알림을 보내 드려요.</p></div>
+      <div class="tile sky"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-16a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2zM10 4v4M2 8h20M6 4v4"/></svg></span><h3>위젯</h3><p>원하는 타일을 홈 화면에 놓고 거기서 바로 누르세요.</p></div>
+      <div class="tile rose"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a1 1 0 0 1 0 -20 10 9 0 0 1 10 9 5 5 0 0 1 -5 5h-2.25a1.75 1.75 0 0 0 -1.4 2.8l.3 .4a1.75 1.75 0 0 1 -1.4 2.8zM13 6.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0zM17 10.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0zM6 12.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0zM8 7.5a.5 .5 0 1 0 1 0a.5 .5 0 1 0 -1 0z"/></svg></span><h3>나만의 스타일로</h3><p>색상, 사진, 약 1,900개의 아이콘, 세 가지 타일 크기.</p></div>
+      <div class="tile teal wide"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v2M14.837 16.385a6 6 0 1 1 -7.223 -7.222c.624 -.147 .97 .66 .715 1.248a4 4 0 0 0 5.26 5.259c.589 -.255 1.396 .09 1.248 .715M16 12a4 4 0 0 0 -4 -4M19 5l-1.256 1.256M20 12h2"/></svg></span><h3>Material You</h3><p>라이트 테마와 다크 테마, Android 12 이상에서는 시스템 색상에 맞춰져요.</p></div>
+      <div class="tile butter wide"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8l6 6M4 14l6 -6 2 -3M2 5h12M7 2h1M22 22l-5 -10 -5 10M14 18h6"/></svg></span><h3>16개 언어</h3><p>영어와 프랑스어부터 일본어와 아랍어까지.</p></div>
+      <div class="tile slate wide"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h.01M8.5 16.429a5 5 0 0 1 7 0M5 12.859a10 10 0 0 1 5.17 -2.69M19 12.859a10 10 0 0 0 -2.007 -1.523M2 8.82a15 15 0 0 1 4.177 -2.643M22 8.82a15 15 0 0 0 -11.288 -3.764M2 2l20 20"/></svg></span><h3>완전한 오프라인</h3><p>계정도, 추적도 없어요. 데이터는 휴대전화에만 남고, 파일 하나로 내보낼 수 있어요.</p></div>
+    </div>
+  </section>
+
+  <section id="screenshots">
+    <h2>스크린샷</h2>
+    <div class="shots" tabindex="0" role="region" aria-label="스크린샷">
+      <img class="raised" src="../img/ko/shot-1.webp" width="540" height="960" loading="lazy" alt="마지막으로 한 뒤 얼마나 지났는지">
+      <img class="raised" src="../img/ko/shot-2.webp" width="540" height="960" loading="lazy" alt="또 했나요? 누르기만 하세요">
+      <img class="raised" src="../img/ko/shot-3.webp" width="540" height="960" loading="lazy" alt="홈 화면에서 바로 누르세요">
+      <img class="raised" src="../img/ko/shot-4.webp" width="540" height="960" loading="lazy" alt="타일을 나만의 스타일로">
+      <img class="raised" src="../img/ko/shot-5.webp" width="540" height="960" loading="lazy" alt="너무 오래되면 알려 드려요">
+      <img class="raised" src="../img/ko/shot-6.webp" width="540" height="960" loading="lazy" alt="라이트 테마와 다크 테마">
+    </div>
+  </section>
+
+  <section id="download" class="card raised">
+    <h2>Time Clicker 받기</h2>
+    <p>무료, 광고 없음, 계정 불필요. Android 8.0 이상.</p>
+    <div class="get"><a class="play-badge" href="https://play.google.com/store/apps/details?id=dev.cfaz.timeclicker&amp;hl=ko"><img alt="Google Play에서 다운로드하기" src="https://play.google.com/intl/ko/badges/static/images/badges/ko_badge_web_generic.png" height="64"></a><span class="apk">또는 GitHub에서 <a href="https://github.com/cfazilleau/TimeClicker/releases/latest">APK 다운로드</a>.</span></div>
+  </section>
+
+  <footer>
+    <p>만든 사람: <a href="https://github.com/cfazilleau">cfazilleau</a>. 아이콘: <a href="https://lucide.dev">Lucide</a>.</p>
+    <p>식물 사진: Zeddong의 “<a href="https://commons.wikimedia.org/wiki/File:A_Wet_Leaf.jpg">A Wet Leaf</a>”, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+    <p><a href="../privacy.html" hreflang="en">개인정보처리방침(영어)</a></p>
+    <p>Google Play 및 Google Play 로고는 Google LLC의 상표입니다.</p>
+  </footer>
+</main>
+<script>
+(() => {
+  const lang = document.documentElement.lang;
+
+  // The demo tile: ticks like a tile in the app; a tap starts it over, another within 10 seconds undoes it.
+  const tile = document.querySelector(".demo");
+  if (tile) {
+    const when = tile.querySelector(".when"), hint = tile.querySelector(".hint");
+    const count = tile.querySelector(".count"), arc = tile.querySelector(".arc circle");
+    const hintText = hint.textContent, undoText = tile.dataset.undo;
+    const units = [["day", 86400], ["hour", 3600], ["minute", 60], ["second", 1]].map(
+      ([unit, s]) => [new Intl.NumberFormat(lang, { style: "unit", unit, unitDisplay: "long" }), s]);
+    const number = new Intl.NumberFormat(lang);
+    let start = Date.now(), presses = 1, previous = null, undoUntil = 0;
+    const draw = () => {
+      const now = Date.now(), seconds = Math.floor((now - start) / 1000);
+      const [format, s] = units.find(([, s]) => seconds >= s) || units[3];
+      const text = format.format(Math.floor(seconds / s));
+      if (when.textContent !== text) when.textContent = text;
+      const left = Math.max(0, undoUntil - now) / 10000;
+      tile.classList.toggle("undoing", left > 0);
+      arc.style.strokeDashoffset = 100 - 100 * left;
+      hint.textContent = left > 0 ? undoText : hintText;
+      count.textContent = number.format(presses);
+    };
+    tile.addEventListener("click", () => {
+      if (previous && Date.now() < undoUntil) {
+        [start, presses] = previous;
+        previous = null;
+        undoUntil = 0;
+      } else {
+        previous = [start, presses];
+        start = Date.now();
+        presses++;
+        undoUntil = start + 10000;
+      }
+      draw();
+    });
+    draw();
+    setInterval(draw, 100);
+  }
+
+  // The chips follow the section in view.
+  const chips = [...document.querySelectorAll(".chips a[href^='#']")];
+  const sections = chips.map(a => document.querySelector(a.getAttribute("href")));
+  const seen = new Map();
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => seen.set(entry.target, entry.isIntersecting));
+    const current = sections.find(section => seen.get(section));
+    chips.forEach((a, i) => a.setAttribute("aria-current", String(sections[i] === current)));
+  }, { rootMargin: "-40% 0px -55% 0px" });
+  sections.forEach(section => observer.observe(section));
+})();
+</script>
+</body>
+</html>

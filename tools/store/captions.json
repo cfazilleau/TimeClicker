@@ -1,5 +1,5 @@
 {
-  "_comment": "Text drawn on the store graphics by compose.py. captions: one per raw phone scene (home, undo, edit, reminder, group, dark, icons, widgets); tagline: the feature graphic.",
+  "_comment": "Text drawn on the store graphics by compose.py. captions: one per raw phone scene (home, undo, edit, reminder, dark, widgets); tagline: the feature graphic.",
   "en-US": {
     "tagline": "How long since you last did it?",
     "captions": [
@@ -7,9 +7,7 @@
       "Did it again? Just tap",
       "Make every tile your own",
       "Get reminded when it’s been too long",
-      "Sort tiles into groups",
       "Light and dark themes",
-      "About 1,900 icons",
       "Tap it right from your home screen"
     ]
   },
@@ -20,9 +18,7 @@
       "Refait ? Touchez la tuile",
       "Personnalisez chaque tuile",
       "Un rappel quand ça fait trop longtemps",
-      "Rangez vos tuiles par groupes",
       "Thèmes clair et sombre",
-      "Environ 1 900 icônes",
       "Touchez-la depuis l’écran d’accueil"
     ]
   },
@@ -33,9 +29,7 @@
       "¿Otra vez? Solo toca",
       "Personaliza cada tarjeta",
       "Recordatorios cuando pase demasiado tiempo",
-      "Ordena tus tarjetas en grupos",
       "Temas claro y oscuro",
-      "Unos 1900 iconos",
       "Tócala desde la pantalla de inicio"
     ]
   },
@@ -46,9 +40,7 @@
       "Wieder gemacht? Einfach tippen",
       "Gestalte jede Kachel selbst",
       "Erinnerungen, wenn es zu lange her ist",
-      "Kacheln in Gruppen sortieren",
       "Helles und dunkles Design",
-      "Rund 1.900 Symbole",
       "Direkt vom Startbildschirm aus"
     ]
   },
@@ -59,9 +51,7 @@
       "Rifatto? Basta un tocco",
       "Personalizza ogni riquadro",
       "Un promemoria quando è passato troppo",
-      "Organizza i riquadri in gruppi",
       "Tema chiaro e scuro",
-      "Circa 1.900 icone",
       "Toccalo dalla schermata Home"
     ]
   },
@@ -72,9 +62,7 @@
       "Fez de novo? É só tocar",
       "Deixe cada card do seu jeito",
       "Lembretes quando passar tempo demais",
-      "Organize os cards em grupos",
       "Temas claro e escuro",
-      "Cerca de 1.900 ícones",
       "Toque direto na tela inicial"
     ]
   },
@@ -85,9 +73,7 @@
       "Weer gedaan? Gewoon tikken",
       "Maak elke tegel van jou",
       "Een herinnering als het te lang duurt",
-      "Deel tegels in groepen in",
       "Licht en donker thema",
-      "Zo’n 1900 pictogrammen",
       "Tik erop vanaf je startscherm"
     ]
   },
@@ -98,9 +84,7 @@
       "Znowu zrobione? Stuknij",
       "Dopasuj każdy kafelek",
       "Przypomnienie, gdy minie za dużo czasu",
-      "Kafelki w grupach",
       "Jasny i ciemny motyw",
-      "Około 1900 ikon",
       "Stuknij prosto z ekranu głównego"
     ]
   },
@@ -111,9 +95,7 @@
       "Сделали снова? Просто нажмите",
       "Настройте каждую плитку",
       "Напомним, если прошло слишком долго",
-      "Плитки по группам",
       "Светлая и тёмная темы",
-      "Около 1900 значков",
       "Отмечайте прямо с главного экрана"
     ]
   },
@@ -124,9 +106,7 @@
       "Yine mi yaptınız? Dokunun yeter",
       "Her kutucuğu size göre ayarlayın",
       "Çok zaman geçince hatırlatma",
-      "Kutucukları gruplara ayırın",
       "Açık ve koyu tema",
-      "Yaklaşık 1.900 simge",
       "Ana ekrandan tek dokunuşla"
     ]
   },
@@ -137,9 +117,7 @@
       "Sudah lagi? Cukup ketuk",
       "Atur setiap kartu sesukamu",
       "Pengingat saat sudah terlalu lama",
-      "Kelompokkan kartu ke dalam grup",
       "Tema terang dan gelap",
-      "Sekitar 1.900 ikon",
       "Ketuk langsung dari layar utama"
     ]
   },
@@ -150,9 +128,7 @@
       "فعلته مجددًا؟ انقر فقط",
       "خصّص كل بطاقة على ذوقك",
       "تذكير عندما يطول الوقت",
-      "رتّب البطاقات في مجموعات",
       "مظهر فاتح وداكن",
-      "نحو 1900 أيقونة",
       "انقر عليها من الشاشة الرئيسية مباشرةً"
     ]
   },
@@ -163,9 +139,7 @@
       "फिर से किया? बस टैप करें",
       "हर टाइल को अपने हिसाब से बनाएँ",
       "बहुत देर होने पर रिमाइंडर",
-      "टाइलों को समूहों में बाँटें",
       "लाइट और डार्क थीम",
-      "लगभग 1,900 आइकन",
       "सीधे होम स्क्रीन से टैप करें"
     ]
   },
@@ -176,9 +150,7 @@
       "またやったら、タップするだけ",
       "タイルを自分好みに",
       "時間が経ちすぎたらお知らせ",
-      "タイルをグループで整理",
       "ライトとダークのテーマ",
-      "約1,900種類のアイコン",
       "ホーム画面から直接タップ"
     ]
   },
@@ -189,9 +161,7 @@
       "또 했나요? 누르기만 하세요",
       "타일을 나만의 스타일로",
       "너무 오래되면 알려 드려요",
-      "타일을 그룹으로 정리",
       "라이트 테마와 다크 테마",
-      "약 1,900개의 아이콘",
       "홈 화면에서 바로 누르세요"
     ]
   },
@@ -202,9 +172,7 @@
       "又做了？点一下就好",
       "每张卡片随心定制",
       "太久没做时提醒你",
-      "用分组整理卡片",
       "浅色和深色主题",
-      "约 1,900 个图标",
       "在主屏幕上直接点按"
     ]
   }
