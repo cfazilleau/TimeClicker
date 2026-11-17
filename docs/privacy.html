@@ -7,32 +7,38 @@
 <meta name="description" content="Time Clicker's privacy policy: the app collects no data and works fully offline.">
 <meta name="theme-color" content="#ECEEF3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1B1D22" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://timeclicker.cfaz.dev/privacy.html">
+<link rel="icon" href="img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@500;600;700;800&amp;display=swap">
 <link rel="stylesheet" href="style.css">
 <style>
-  main { max-width: 680px; }
-  h1 { font-size: clamp(2rem, 6vw, 2.6rem); }
+  main { max-width: 720px; }
+  .appbar .back { width: 48px; padding: 0; }
+  .appbar .back svg.i { width: 22px; height: 22px; }
+  [dir="rtl"] .appbar .back svg.i { transform: scaleX(-1); }
+  h1 { font-size: clamp(2.1rem, 7vw, 2.8rem); font-weight: 800; letter-spacing: -.03em; line-height: 1.08; margin: 16px 0 8px; }
   .updated { color: var(--muted); margin: 0 0 32px; }
-  .summary {
-    padding: 20px 24px;
-    border-radius: 24px;
-    background: var(--sage-bg);
-    color: var(--sage-fg);
-    box-shadow: 6px 6px 14px var(--shadow), -6px -6px 14px var(--highlight);
-    font-weight: 500;
-  }
-  h2 { font-size: 1.2rem; margin: 36px 0 8px; }
-  ul { padding-left: 1.2em; }
+  .summary { font-size: 1.08rem; font-weight: 600; line-height: 1.5; padding: 22px 24px; }
+  .summary .chip-icon { margin-bottom: 14px; }
+  h2 { font-size: 1.3rem; margin: 40px 0 10px; }
+  ul { padding-inline-start: 1.2em; }
   li + li { margin-top: 6px; }
-  .back { display: inline-block; margin-bottom: 24px; color: var(--muted); text-decoration: none; }
+  code { font-size: .92em; background: var(--field); padding: 1px 6px; border-radius: 6px; }
 </style>
 </head>
 <body>
 <main>
-  <a class="back" href="./">← Time Clicker</a>
+  <header class="appbar">
+    <a class="neu-btn raised-sm back" href="./" aria-label="Back to Time Clicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19l-7 -7 7 -7M19 12H5"/></svg></a>
+    <a class="logo" href="./"><img src="img/icon.svg" alt="" width="48" height="48"><span>Time Clicker</span></a>
+  </header>
   <h1>Privacy policy</h1>
   <p class="updated">Last updated: October 7, 2026</p>
 
-  <p class="summary">Time Clicker collects no personal data. It has no account, no ads, no analytics and no internet access. Everything you enter stays on your device.</p>
+  <div class="tile sage summary"><span class="chip-icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5 -3.5 7.5 -7.66 8.95a1 1 0 0 1 -.67 -.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1 -1c2 0 4.5 -1.2 6.24 -2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4 -4"/></svg></span><p>Time Clicker collects no personal data. It has no account, no ads, no analytics and no internet access. Everything you enter stays on your device.</p></div>
 
   <h2>What the app stores</h2>
   <p>To work, Time Clicker saves the following, only on your device, in the app's private storage:</p>

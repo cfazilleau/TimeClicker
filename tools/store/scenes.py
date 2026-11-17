@@ -6,13 +6,8 @@ from pathlib import Path
 import demo
 from capture import PACKAGE, Device, demo_status_bar, launch, seed
 
-# Shown in the icon palette screenshot: the demo tiles' icons, then a few more.
-PALETTE = ("sprout,cat,phone,scissors,car,bed,trash,coffee,refrigerator,pill,footprints,toothbrush,paw-print,"
-           "dumbbell,shopping-cart,shirt,bath,gift,cake")
-
-
-def fresh(dev: Device, locale: str, theme="light", palette=None, only=None):
-    seed(dev, locale, theme, palette, only)
+def fresh(dev: Device, locale: str, theme="light", only=None):
+    seed(dev, locale, theme, only)
     dev.sh(f"pm grant {PACKAGE} android.permission.POST_NOTIFICATIONS")
     dev.sh("cmd statusbar collapse")
     launch(dev)
@@ -67,38 +62,18 @@ def run(dev: Device, locale: str, s: dict[str, str], out: Path, kind: str):
     shot(4)
     dev.sh("input keyevent BACK")
 
-    # 5. One group.
-    fresh(dev, locale)
-    dev.tap_label(names["home"])
-    time.sleep(1.5)
-    shot(5)
-
-    # 6. Dark theme, scrolled to the groups' sections.
+    # 5. Dark theme, scrolled to the groups' sections.
     fresh(dev, locale, theme="dark")
     scroll_to(dev, names["home"], h * 0.255, last=True)
-    shot(6)
+    shot(5)
 
-    # 7. The icon palette.
-    fresh(dev, locale, palette=PALETTE)
-    for attempt in range(3):  # A tap right after launch can be lost.
-        dev.tap_label(s["action_menu"])
-        try:
-            dev.tap_label(s["settings_icon_palette"], timeout=3)
-            break
-        except LookupError:
-            if attempt == 2:
-                raise
-    dev.find(s["icon_palette_yours"])  # The screen has slid in.
-    time.sleep(1)
-    shot(7)
-
-    # 8. Widgets on the home screen. They were placed once by hand (README): plants, cat, Grandma, vitamins.
+    # 6. Widgets on the home screen. They were placed once by hand (README): plants, cat, Grandma, vitamins.
     fresh(dev, locale)
     dev.sh("input keyevent HOME")
     # Swapping the database behind the app's back doesn't redraw the widgets: ask for it.
     dev.sh(f"am broadcast -a {PACKAGE}.action.WIDGET_TICK -n {PACKAGE}/.widget.WidgetTickReceiver")
     time.sleep(3)
-    shot(8)
+    shot(6)
 
 
 def scroll_to(dev: Device, label: str, y: float, last=False):

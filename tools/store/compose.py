@@ -3,7 +3,7 @@
     python tools/store/compose.py [--locales en-US fr-FR]
 
 Writes into fastlane/metadata/android/<locale>/images/:
-  phoneScreenshots/<n>.jpg   1080x1920, a caption above each raw phone screenshot (8 scenes)
+  phoneScreenshots/<n>.jpg   1080x1920, a caption above each raw phone screenshot (6 scenes)
   tenInchScreenshots/<n>.jpg 2560x1440, the same for the tablet ones (when captured)
   featureGraphic.png         1024x500, the icon, the name, a tagline and three tiles (capture.py --kind feature)
   icon.png                   512x512 (en-US only: the default for every language)
@@ -25,6 +25,7 @@ from pathlib import Path
 from PIL import Image
 
 import demo
+from fonts import font
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -45,8 +46,8 @@ LIGHT = {"ground": "#ECEEF3", "text": "#1C1F26", "muted": "#555B69",
 DARK = {"ground": "#1B1D22", "text": "#F1F2F5", "muted": "#A2A8B4",
         "shadow": "rgba(0,0,0,.6)", "highlight": "rgba(255,255,255,.05)"}
 
-# Scene 6 (dark theme) gets a dark page.
-DARK_SCENES = {6}
+# Scene 5 (dark theme) gets a dark page.
+DARK_SCENES = {5}
 
 # The launcher icon (res/drawable/ic_launcher_foreground.xml), as SVG, on its background colour.
 ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72">
@@ -56,12 +57,6 @@ ICON_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72">
 <path d="M54,40 L54,54 L64,60" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>"""
 
-FONT = {
-    "ar": ("Noto Sans Arabic", "Noto+Sans+Arabic"), "hi-IN": ("Noto Sans Devanagari", "Noto+Sans+Devanagari"),
-    "ja-JP": ("Noto Sans JP", "Noto+Sans+JP"), "ko-KR": ("Noto Sans KR", "Noto+Sans+KR"),
-    "zh-CN": ("Noto Sans SC", "Noto+Sans+SC"),
-}
-
 # Height of the tablet's taskbar, cut from tablet captures.
 TASKBAR = 130
 
@@ -70,7 +65,7 @@ TILES_CROP = (0, 410, 1080, 1370)
 
 
 def page(locale: str, size: tuple[int, int], body: str, css: str, theme=LIGHT) -> str:
-    family, query = FONT.get(locale, ("Noto Sans", "Noto+Sans"))
+    family, query = font(locale)
     lang = demo.ANDROID_LOCALE[locale].split("-")[0]
     rtl = ' dir="rtl"' if locale == "ar" else ""
     vars_ = "".join(f"--{k}:{v};" for k, v in theme.items())
@@ -177,8 +172,8 @@ def jobs_for(locale: str):
     images = META / locale / "images"
     captions = CAPTIONS[locale]["captions"]
     for kind, folder, size, tablet, scenes in [
-        # Phone: the widgets (raw scene 8) come third.
-        ("phone", "phoneScreenshots", (1080, 1920), False, [1, 2, 8, 3, 4, 5, 6, 7]),
+        # Phone: the widgets (raw scene 6) come third.
+        ("phone", "phoneScreenshots", (1080, 1920), False, [1, 2, 6, 3, 4, 5]),
         # Tablet scenes: home, dark theme, editing a tile.
         ("tablet", "tenInchScreenshots", (2560, 1440), True, [1, 2, 3]),
     ]:
@@ -190,7 +185,7 @@ def jobs_for(locale: str):
             if not raw.exists():
                 continue
             if tablet:
-                caption, theme = [captions[0], captions[5], captions[2]][n - 1], DARK if n == 2 else LIGHT
+                caption, theme = [captions[0], captions[4], captions[2]][n - 1], DARK if n == 2 else LIGHT
                 raw = crop_taskbar(raw, locale, n)
             else:
                 caption, theme = captions[n - 1], DARK if n in DARK_SCENES else LIGHT

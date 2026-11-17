@@ -166,8 +166,7 @@ def photo_name(key: str) -> str:
     return f"demo-{key}.img"
 
 
-def settings_xml(theme: str, palette: str | None) -> str:
-    palette_line = f'\n    <string name="icon_palette">{palette}</string>' if palette else ""
+def settings_xml(theme: str) -> str:
     return f"""<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
 <map>
     <string name="theme">{theme}</string>
@@ -175,7 +174,7 @@ def settings_xml(theme: str, palette: str | None) -> str:
     <string name="time_display">relative</string>
     <boolean name="haptics" value="false" />
     <boolean name="click_sound" value="false" />
-    <boolean name="show_counter" value="true" />{palette_line}
+    <boolean name="show_counter" value="true" />
 </map>
 """
 
@@ -187,7 +186,7 @@ def push_as_app(dev: Device, local: Path, remote: str):
     dev.sh(f"chown {owner}:{owner} {remote} && chmod 660 {remote} && restorecon {remote}")
 
 
-def seed(dev: Device, locale: str, theme="light", palette: str | None = None, only=None):
+def seed(dev: Device, locale: str, theme="light", only=None):
     """Replaces the app's data with the demo tiles of [locale], and switches the app to that language."""
     dev.sh(f"am force-stop {PACKAGE}")
     dev.sh(f"cmd locale set-app-locales {PACKAGE} --locales {demo.ANDROID_LOCALE[locale]}")
@@ -204,7 +203,7 @@ def seed(dev: Device, locale: str, theme="light", palette: str | None = None, on
         build_database(db, locale, dev.now_ms(), only)
         push_as_app(dev, db, f"{DATA}/databases/time_clicker.db")
         prefs = Path(tmp) / "settings.xml"
-        prefs.write_text(settings_xml(theme, palette), encoding="utf-8")
+        prefs.write_text(settings_xml(theme), encoding="utf-8")
         push_as_app(dev, prefs, f"{DATA}/shared_prefs/settings.xml")
     # A widget broadcast may have started the app meanwhile, holding the old database open.
     dev.sh(f"am force-stop {PACKAGE}")
