@@ -1,1 +1,8 @@
-Primeira versão no Google Play.
+• Cores personalizadas nos cards: escolha qualquer tom com o conta-gotas
+• Modo reordenar: arraste os cards na hora, até para outro grupo
+• Grupos podem ter um ícone
+• Tempo relativo ou absoluto, escolhido em cada card
+• Um card novo não mostra o tempo até o primeiro toque
+• Contador: recupere um toque que você acabou de desfazer
+• Os tamanhos dos cards mostram o formato
+• Correção: desfazer não se perde mais quando o app fecha

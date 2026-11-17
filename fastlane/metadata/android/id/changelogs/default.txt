@@ -1,1 +1,8 @@
-Rilis pertama di Google Play.
+• Warna kartu kustom: pilih warna apa pun dengan pipet
+• Mode urutan: seret kartu langsung, bahkan ke grup lain
+• Grup bisa punya ikon
+• Waktu relatif atau absolut, dipilih per kartu
+• Kartu baru tidak menampilkan waktu sampai ditekan pertama kali
+• Penghitung: kembalikan tekanan yang baru saja diurungkan
+• Ukuran kartu menunjukkan bentuknya
+• Perbaikan: urungkan tidak hilang lagi saat aplikasi ditutup

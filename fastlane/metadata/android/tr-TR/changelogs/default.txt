@@ -1,1 +1,8 @@
-Google Play'deki ilk sürüm.
+• Özel kutucuk renkleri: damlalıkla istediğiniz tonu seçin
+• Sıralama modu: kutucukları hemen sürükleyin, başka bir gruba bile
+• Gruplara simge eklenebilir
+• Göreli veya mutlak zaman, her kutucuk için ayrı
+• Yeni bir kutucuk ilk dokunuşa kadar zaman göstermez
+• Sayaç: az önce geri aldığınız dokunuşu geri getirin
+• Kutucuk boyutları şekillerini gösterir
+• Düzeltme: uygulama kapanınca geri alma artık kaybolmuyor

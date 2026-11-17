@@ -1,1 +1,8 @@
-Pierwsza wersja w Google Play.
+• Własne kolory kafelków: wybierz dowolny odcień pipetą
+• Zmiana kolejności: przeciągaj kafelki od razu, także do innej grupy
+• Grupy mogą mieć ikonę
+• Czas względny lub bezwzględny, osobno dla każdego kafelka
+• Nowy kafelek nie pokazuje czasu do pierwszego stuknięcia
+• Licznik: przywróć właśnie cofnięte stuknięcie
+• Rozmiary kafelków pokazują swój kształt
+• Poprawka: cofanie nie ginie już po zamknięciu aplikacji

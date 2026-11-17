@@ -1,1 +1,8 @@
-Eerste versie op Google Play.
+• Eigen tegelkleuren: kies elke tint met de pipet
+• Ordenen: sleep tegels meteen, ook naar een andere groep
+• Groepen kunnen een pictogram hebben
+• Relatieve of absolute tijd, per tegel te kiezen
+• Een nieuwe tegel toont pas een tijd na de eerste tik
+• Teller: haal een net ongedaan gemaakte tik terug
+• Tegelformaten tonen hun vorm
+• Oplossing: ongedaan maken gaat niet meer verloren als de app sluit

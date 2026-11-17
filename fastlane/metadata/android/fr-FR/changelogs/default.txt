@@ -1,1 +1,8 @@
-Première version sur Google Play.
+• Couleurs de tuile personnalisées : toute teinte avec la pipette
+• Mode réorganisation : glissez les tuiles tout de suite, même vers un autre groupe
+• Les groupes peuvent avoir une icône
+• Temps relatif ou absolu, au choix pour chaque tuile
+• Une nouvelle tuile n’affiche pas de temps avant son premier appui
+• Compteur : rétablissez un appui que vous venez d’annuler
+• Les tailles de tuile montrent leur forme
+• Correction : l’annulation n’est plus perdue quand l’app se ferme

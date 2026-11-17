@@ -1,1 +1,8 @@
-Prima versione su Google Play.
+• Colori personalizzati dei riquadri: scegli qualsiasi tonalità con il contagocce
+• Modalità riordino: trascina subito i riquadri, anche in un altro gruppo
+• I gruppi possono avere un’icona
+• Tempo relativo o assoluto, a scelta per ogni riquadro
+• Un nuovo riquadro non mostra il tempo fino al primo tocco
+• Contatore: ripristina un tocco appena annullato
+• Le dimensioni dei riquadri mostrano la loro forma
+• Correzione: l’annullamento non si perde più alla chiusura dell’app

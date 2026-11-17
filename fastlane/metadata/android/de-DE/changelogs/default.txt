@@ -1,1 +1,8 @@
-Erste Version bei Google Play.
+• Eigene Kachelfarben: jeden Farbton mit der Pipette wählen
+• Anordnen: Kacheln sofort ziehen, auch in eine andere Gruppe
+• Gruppen können ein Symbol haben
+• Relative oder absolute Zeit, pro Kachel wählbar
+• Eine neue Kachel zeigt erst nach dem ersten Tippen eine Zeit
+• Zähler: einen gerade rückgängig gemachten Tipp zurückholen
+• Kachelgrößen zeigen ihre Form
+• Fehlerbehebung: Rückgängig geht beim Schließen der App nicht mehr verloren
