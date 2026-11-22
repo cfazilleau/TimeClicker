@@ -16,8 +16,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -281,46 +283,49 @@ fun TileCard(
                     }
                 }
             }
-            Spacer(Modifier.weight(1f))
-            val ago = agoAffixes(resources)
-            val headline = when {
-                !tracker.hasPressed -> AnnotatedString(" ")
-                absoluteTime != null -> AnnotatedString(absoluteTime.headline)
-                else -> relativeHeadline(elapsed, ago.prefix)
-            }
-            TileTexts(tracker, headline, { textAlpha }, colors.content, textShadow)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = when {
-                        undoing -> undoHint
-                        !tracker.hasPressed -> ""
-                        absoluteTime != null -> absoluteTime.detail
-                        elapsed.isEmpty -> ""
-                        // "5 hours ago" or "et 5 heures": the next unit, then the end of "… ago" (if the language puts it after).
-                        else -> (elapsed.minor?.formatAsSecond(resources).orEmpty() + ago.suffix).trim()
-                    },
-                    style = TextStyle(fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, shadow = textShadow),
-                    color = colors.content,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    // The undo hint shrinks to fit a small tile rather than lose its end.
-                    autoSize = if (undoing) TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = 12.5.sp) else null,
-                    // The undo hint shows at once, while the elapsed time is still hidden.
-                    modifier = Modifier.weight(1f).graphicsLayer { alpha = if (undoing) 1f else textAlpha },
-                )
-                // How many times the tile was pressed (since created, or since its counter was reset).
-                if (settings.showCounter) Text(
-                    text = NumberFormat.getIntegerInstance().format(tracker.pressCount),
-                    style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp),
-                    color = colors.content,
-                    maxLines = 1,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .clip(RoundedCornerShape(999.dp))
-                        .background(glass)
-                        .border(1.dp, glassBorder, RoundedCornerShape(999.dp))
-                        .padding(horizontal = 7.dp, vertical = 1.dp),
-                )
+            // The texts sit at the bottom. The name and the bottom row are measured first, the headline gets what's left
+            // and shrinks into it: a script with taller lines (Chinese, Japanese, Korean) never pushes the bottom row out.
+            Column(Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.Bottom) {
+                val ago = agoAffixes(resources)
+                val headline = when {
+                    !tracker.hasPressed -> AnnotatedString(" ")
+                    absoluteTime != null -> AnnotatedString(absoluteTime.headline)
+                    else -> relativeHeadline(elapsed, ago.prefix)
+                }
+                TileTexts(tracker, headline, { textAlpha }, colors.content, textShadow)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = when {
+                            undoing -> undoHint
+                            !tracker.hasPressed -> ""
+                            absoluteTime != null -> absoluteTime.detail
+                            elapsed.isEmpty -> ""
+                            // "5 hours ago" or "et 5 heures": the next unit, then the end of "… ago" (if the language puts it after).
+                            else -> (elapsed.minor?.formatAsSecond(resources).orEmpty() + ago.suffix).trim()
+                        },
+                        style = TextStyle(fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, shadow = textShadow),
+                        color = colors.content,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        // The undo hint shrinks to fit a small tile rather than lose its end.
+                        autoSize = if (undoing) TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = 12.5.sp) else null,
+                        // The undo hint shows at once, while the elapsed time is still hidden.
+                        modifier = Modifier.weight(1f).graphicsLayer { alpha = if (undoing) 1f else textAlpha },
+                    )
+                    // How many times the tile was pressed (since created, or since its counter was reset).
+                    if (settings.showCounter) Text(
+                        text = NumberFormat.getIntegerInstance().format(tracker.pressCount),
+                        style = TextStyle(fontSize = 11.sp, fontWeight = FontWeight.Bold, lineHeight = 14.sp),
+                        color = colors.content,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .clip(RoundedCornerShape(999.dp))
+                            .background(glass)
+                            .border(1.dp, glassBorder, RoundedCornerShape(999.dp))
+                            .padding(horizontal = 7.dp, vertical = 1.dp),
+                    )
+                }
             }
         }
     }
@@ -346,9 +351,9 @@ private fun relativeHeadline(elapsed: Elapsed, agoPrefix: String): AnnotatedStri
     }
 }
 
-/** Name and the big time text: how long ago, or the day it was done. */
+/** Name and the big time text: how long ago, or the day it was done. The time takes the height left, at most. */
 @Composable
-private fun TileTexts(tracker: Tracker, headline: AnnotatedString, textAlpha: () -> Float, color: Color, shadow: TextShadow?) {
+private fun ColumnScope.TileTexts(tracker: Tracker, headline: AnnotatedString, textAlpha: () -> Float, color: Color, shadow: TextShadow?) {
     val headlineSize = when (tracker.size) {
         TileSize.TALL -> 44.sp
         TileSize.WIDE -> 32.sp
@@ -384,8 +389,9 @@ private fun TileTexts(tracker: Tracker, headline: AnnotatedString, textAlpha: ()
         ),
         color = color,
         maxLines = 1,
-        // Long values ("59 minutes", "364 days") shrink to fit instead of being cut off.
+        // Long values ("59 minutes", "364 days") shrink to fit instead of being cut off, and so does a line too tall for
+        // the height left.
         autoSize = TextAutoSize.StepBased(minFontSize = 18.sp, maxFontSize = headlineSize),
-        modifier = Modifier.padding(top = 4.dp).graphicsLayer { alpha = textAlpha() },
+        modifier = Modifier.weight(1f, fill = false).padding(top = 4.dp).graphicsLayer { alpha = textAlpha() },
     )
 }
