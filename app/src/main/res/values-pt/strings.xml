@@ -83,6 +83,7 @@
     <string name="size_wide">Largo</string>
     <string name="size_tall">Alto</string>
     <string name="label_counter">Contador</string>
+    <string name="edit_advanced">Opções avançadas</string>
     <string name="counter_reset">Zerar</string>
     <string name="counter_undo_last">Desfazer o último toque</string>
     <string name="widget_add">Adicionar à tela inicial</string>

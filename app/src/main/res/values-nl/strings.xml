@@ -77,6 +77,7 @@
     <string name="size_wide">Breed</string>
     <string name="size_tall">Hoog</string>
     <string name="label_counter">Teller</string>
+    <string name="edit_advanced">Geavanceerde opties</string>
     <string name="counter_reset">Resetten</string>
     <string name="counter_undo_last">Laatste druk ongedaan maken</string>
     <string name="widget_add">Toevoegen aan startscherm</string>

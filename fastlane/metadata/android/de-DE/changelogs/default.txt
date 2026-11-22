@@ -1,8 +1,3 @@
-• Eigene Kachelfarben: jeden Farbton mit der Pipette wählen
-• Anordnen: Kacheln sofort ziehen, auch in eine andere Gruppe
-• Gruppen können ein Symbol haben
-• Relative oder absolute Zeit, pro Kachel wählbar
-• Eine neue Kachel zeigt erst nach dem ersten Tippen eine Zeit
-• Zähler: einen gerade rückgängig gemachten Tipp zurückholen
-• Kachelgrößen zeigen ihre Form
-• Fehlerbehebung: Rückgängig geht beim Schließen der App nicht mehr verloren
+• Kachel bearbeiten: eine Live-Vorschau bleibt oben, in echter Größe und Form der Kachel
+• Der Name steht zuerst, die erweiterten Optionen sind eingeklappt
+• Gruppen verwalten über die Schaltfläche nach den Gruppen-Chips

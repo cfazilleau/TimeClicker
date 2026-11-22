@@ -71,6 +71,7 @@
     <string name="size_wide">宽</string>
     <string name="size_tall">高</string>
     <string name="label_counter">计数器</string>
+    <string name="edit_advanced">高级选项</string>
     <string name="counter_reset">重置</string>
     <string name="counter_undo_last">撤销上一次按下</string>
     <string name="widget_add">添加到主屏幕</string>

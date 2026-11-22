@@ -128,8 +128,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.absoluteValue
 
-private val TileHeight = 156.dp
-private val TileSpacing = 16.dp
+internal val TileHeight = 156.dp
+internal val TileSpacing = 16.dp
 private const val SwayDegrees = 0.8f
 private const val SwayMillis = 240
 
@@ -174,7 +174,6 @@ fun HomeScreen(
                     HomeMenu(
                         canReorder = canReorder,
                         onReorder = { reordering = true },
-                        onManageGroups = onManageGroups,
                         onOpenIconPalette = onOpenIconPalette,
                         onOpenSettings = onOpenSettings,
                         onOpenAbout = onOpenAbout,
@@ -191,6 +190,7 @@ fun HomeScreen(
                     onMoveToGroup = viewModel::moveToGroup,
                     onSelect = viewModel::select,
                     onEditGroup = { renamingGroupId = it },
+                    onManageGroups = onManageGroups,
                     photoFile = viewModel::photoFile,
                     onClick = { tracker ->
                         if (clickSound) TapSound.play(context)
@@ -295,6 +295,7 @@ private fun GroupPager(
     onMoveToGroup: (trackerId: Long, groupId: Long?) -> Unit,
     onSelect: (GroupFilter) -> Unit,
     onEditGroup: (Long) -> Unit,
+    onManageGroups: () -> Unit,
     photoFile: (String) -> File,
     onClick: (Tracker) -> Unit,
     onLongClick: (Tracker) -> Unit,
@@ -329,6 +330,7 @@ private fun GroupPager(
                     selected = pagerState.currentPage,
                     onSelect = { index -> scope.launch { pagerState.animateScrollToPage(index, animationSpec = PageSpring) } },
                     onEditGroup = onEditGroup,
+                    onManageGroups = onManageGroups,
                     dropTarget = drag.overChip,
                     chipBounds = drag.chips,
                 )
@@ -595,7 +597,6 @@ private fun TitleBar(reordering: Boolean, onDoneReordering: () -> Unit, menu: @C
 private fun HomeMenu(
     canReorder: Boolean,
     onReorder: () -> Unit,
-    onManageGroups: () -> Unit,
     onOpenIconPalette: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
@@ -634,7 +635,6 @@ private fun HomeMenu(
                 )
             }
             Item(AppIcons.Reorder, stringResource(R.string.reorder_tiles), onReorder, enabled = canReorder)
-            Item(AppIcons.Groups, stringResource(R.string.action_manage_groups), onManageGroups)
             Item(AppIcons.Palette, stringResource(R.string.settings_icon_palette), onOpenIconPalette)
             HorizontalDivider(Modifier.padding(horizontal = 16.dp, vertical = 4.dp), color = palette.field)
             Item(AppIcons.Settings, stringResource(R.string.action_settings), onOpenSettings)
@@ -654,6 +654,7 @@ private fun FilterChips(
     selected: Int,
     onSelect: (Int) -> Unit,
     onEditGroup: (Long) -> Unit,
+    onManageGroups: () -> Unit,
     dropTarget: Long?,
     chipBounds: MutableMap<Long, Rect>,
 ) {
@@ -736,6 +737,16 @@ private fun FilterChips(
                     modifier = Modifier.bringIntoViewRequester(bringIntoView).then(dropModifier).height(40.dp),
                 ) { content() }
             }
+        }
+        // After the last group: the screen to add, rename, reorder and delete them.
+        NeuButton(
+            onClick = onManageGroups,
+            shape = CircleShape,
+            distance = 5.dp,
+            blur = 12.dp,
+            modifier = Modifier.size(40.dp),
+        ) {
+            Icon(AppIcons.Groups, stringResource(R.string.action_manage_groups), tint = palette.text, modifier = Modifier.size(20.dp))
         }
     }
 }

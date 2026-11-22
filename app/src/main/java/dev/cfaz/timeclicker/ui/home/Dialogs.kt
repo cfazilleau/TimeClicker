@@ -43,7 +43,7 @@ import dev.cfaz.timeclicker.ui.theme.TimeClickerTheme
 import dev.cfaz.timeclicker.ui.theme.rememberTileIcon
 
 /**
- * Creates or edits a group: its name, and optionally an icon, chosen from the icon list by the button in the field.
+ * Creates or edits a group: its name, and optionally an icon, chosen from the icon list by the button at the start of the field.
  * Without choosing one, the group has no icon.
  */
 @Composable
@@ -75,7 +75,7 @@ fun GroupDialog(
                     onValueChange = { value = it },
                     label = { Text(stringResource(R.string.label_name)) },
                     singleLine = true,
-                    trailingIcon = {
+                    leadingIcon = {
                         val vector = rememberTileIcon(icon)
                         Box(
                             Modifier

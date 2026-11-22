@@ -1,8 +1,3 @@
-• Custom tile colours: pick any hue with the eyedropper
-• Reorder mode: drag tiles right away, even into another group
-• Groups can have an icon
-• Relative or absolute time, chosen per tile
-• A new tile shows no time until its first press
-• Counter: bring back a press you just undid
-• Tile sizes show their shape
-• Fix: undo is no longer lost when the app closes
+• Editing a tile: a live preview stays at the top, at the tile's real size and shape
+• The name comes first, and the advanced options are folded away
+• Manage your groups from the button after the group chips

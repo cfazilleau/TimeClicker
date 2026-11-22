@@ -101,6 +101,7 @@
     <string name="size_wide">عريض</string>
     <string name="size_tall">طويل</string>
     <string name="label_counter">العدّاد</string>
+    <string name="edit_advanced">خيارات متقدمة</string>
     <string name="counter_reset">إعادة الضبط</string>
     <string name="counter_undo_last">تراجع عن آخر ضغطة</string>
     <string name="widget_add">إضافة إلى الشاشة الرئيسية</string>

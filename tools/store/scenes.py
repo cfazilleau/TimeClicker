@@ -57,8 +57,9 @@ def run(dev: Device, locale: str, s: dict[str, str], out: Path, kind: str):
     time.sleep(1.5)
     shot(3)
 
-    # 4. Its reminder, further down the same sheet.
-    scroll_to(dev, s["label_reminder"], h * 0.36)
+    # 4. Its reminder, further down the same sheet (in Advanced options, open as the tile has one), under the preview
+    # pinned at the top.
+    scroll_to(dev, s["label_reminder"], h * 0.55)
     shot(4)
     dev.sh("input keyevent BACK")
 

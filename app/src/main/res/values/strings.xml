@@ -85,6 +85,7 @@
     <string name="size_wide">Wide</string>
     <string name="size_tall">Tall</string>
     <string name="label_counter">Counter</string>
+    <string name="edit_advanced">Advanced options</string>
     <string name="counter_reset">Reset</string>
     <string name="counter_undo_last">Undo last press</string>
     <string name="counter_redo_last">Restore the press just deleted</string>

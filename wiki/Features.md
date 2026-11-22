@@ -11,13 +11,17 @@ The number in the tile's bottom-right corner counts how many times it was presse
 - **Tap** a tile: mark it as done now. For the next 10 seconds the tile offers to undo it
   ("Tap again to undo", with a ring counting down in its corner): tapping it again undoes the press.
   Widgets do the same (before Android 12 their ring steps once a second), and a press on one can be undone on the other.
-- **Long-press** a tile: edit it in a sheet: name, group, colour or photo background, icon (or none; your icon palette, plus a searchable list of every icon with the recently used ones first),
-  size (Small / Wide / Tall), undo its last press or reset its press counter, a reminder, add it to the home screen, or delete it.
-  All sizes show the same content.
+- **Long-press** a tile: edit it in a sheet. A live preview stays at the top, at the tile's size and shape on the home
+  screen (a tall tile is shrunk to fit), while the options scroll under it: name, group (or a new one, with its icon),
+  colour or photo background, icon (or none; your icon palette, plus a searchable list of every icon with the recently
+  used ones first) and size (Small / Wide / Tall). **Advanced options**, folded away unless the tile already uses them:
+  time display, the press counter (undo or redo its last press, or reset it), a reminder, and add it to the home
+  screen. Last, delete it. All sizes show the same content.
 - **+** button (bottom centre): add a new tile, pre-filed in the group currently shown.
 - **Group chips**, or **swiping left/right**, move between groups; "All" shows the tiles without a group,
-  then one section per group.
-  The sliders button opens **Groups**: add, rename, delete, drag to reorder.
+  then one section per group. Holding a group's chip renames it or changes its icon.
+  The sliders button after the last chip opens **Groups**: add, rename, delete, drag to reorder.
+  The chips show once there is a group: make the first one from a tile's edit sheet.
 
 ## Reminders
 
@@ -37,8 +41,9 @@ Tapping the widget marks it as done (with the click sound); its icon opens the a
 
 ## Settings
 
-The gear button, next to the title, opens the settings: theme (system / light / dark), system colours, time shown as
-"3 days ago" or as a date and time, vibration, click sound, press counter, **icon palette**, groups, language,
+The gear button, next to the title, opens a menu: reorder tiles, the **icon palette**, the settings, and About.
+The settings: theme (system / light / dark), system colours, time shown as
+"3 days ago" or as a date and time, vibration, click sound, press counter, **icon palette**, language,
 **export / import** of everything (tiles, groups, history, photos, settings) as one `.zip` file,
 and a **Credits** page for the open-source projects the app uses, with their licences.
 

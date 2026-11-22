@@ -1,8 +1,3 @@
-• Własne kolory kafelków: wybierz dowolny odcień pipetą
-• Zmiana kolejności: przeciągaj kafelki od razu, także do innej grupy
-• Grupy mogą mieć ikonę
-• Czas względny lub bezwzględny, osobno dla każdego kafelka
-• Nowy kafelek nie pokazuje czasu do pierwszego stuknięcia
-• Licznik: przywróć właśnie cofnięte stuknięcie
-• Rozmiary kafelków pokazują swój kształt
-• Poprawka: cofanie nie ginie już po zamknięciu aplikacji
+• Edycja kafelka: podgląd na żywo zostaje u góry, w prawdziwym rozmiarze i kształcie kafelka
+• Nazwa jest pierwsza, a opcje zaawansowane są zwinięte
+• Zarządzaj grupami przyciskiem za chipami grup

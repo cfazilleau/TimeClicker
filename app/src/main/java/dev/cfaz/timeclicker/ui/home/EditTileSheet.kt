@@ -4,6 +4,15 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,6 +21,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +34,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -40,6 +51,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import kotlin.math.roundToInt
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -175,12 +194,10 @@ fun EditTileSheet(
         dragHandle = null,
         containerColor = palette.sheet,
     ) {
+        // The title and the preview stay at the top; the options scroll under them.
         Column(
-            Modifier
-                .fillMaxWidth()
-                .verticalScroll(scrollState)
-                .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 28.dp),
-            verticalArrangement = Arrangement.spacedBy(22.dp),
+            Modifier.fillMaxWidth().padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -196,18 +213,37 @@ fun EditTileSheet(
                 )
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                TilePreview(saved, draft, photoFile)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionLabel(stringResource(R.string.label_name))
-                    NeuTextField(
-                        value = draft.name,
-                        onValueChange = { draft = draft.copy(name = it) },
-                        label = stringResource(R.string.label_name),
-                        placeholder = stringResource(R.string.name_placeholder),
-                        modifier = Modifier.fillMaxWidth(),
-                    )
+            // A fixed height, so the options below don't jump as the preview changes shape.
+            // The sheet has the home screen's side margins, so its columns come out the same width as the grid's.
+            BoxWithConstraints(Modifier.fillMaxWidth().height(PreviewMaxHeight), contentAlignment = Alignment.Center) {
+                val columns = with(LocalDensity.current) {
+                    Bento.columnCount(constraints.maxWidth, BentoMinCellWidth.roundToPx(), TileSpacing.roundToPx())
                 }
+                val cellWidth = (maxWidth - TileSpacing * (columns - 1)) / columns
+                TilePreview(saved, draft, photoFile, cellWidth)
+            }
+        }
+        // A line under the header once options have scrolled beneath it.
+        val scrolled by animateFloatAsState(if (scrollState.canScrollBackward) 1f else 0f, label = "headerLine")
+        HorizontalDivider(Modifier.graphicsLayer { alpha = scrolled }, color = palette.field)
+
+        Column(
+            Modifier
+                .weight(1f, fill = false)
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 28.dp),
+            verticalArrangement = Arrangement.spacedBy(22.dp),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                SectionLabel(stringResource(R.string.label_name))
+                NeuTextField(
+                    value = draft.name,
+                    onValueChange = { draft = draft.copy(name = it) },
+                    label = stringResource(R.string.label_name),
+                    placeholder = stringResource(R.string.name_placeholder),
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -295,68 +331,75 @@ fun EditTileSheet(
                 )
             }
 
-            val count = if (draft.resetCount) 0 else saved.pressCount
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                SectionLabel(stringResource(R.string.label_counter))
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    Text(
-                        pluralStringResource(R.plurals.press_count, count, count),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = palette.text,
-                        modifier = Modifier.weight(1f),
-                    )
-                    SheetIconButton(
-                        AppIcons.Undo,
-                        stringResource(R.string.counter_undo_last),
-                        enabled = count > 0,
-                        onClick = { scope.launch { onRevertLastPress()?.let { redoStack.add(it) } } },
-                    )
-                    SheetIconButton(
-                        AppIcons.Redo,
-                        stringResource(R.string.counter_redo_last),
-                        enabled = redoStack.isNotEmpty() && !draft.resetCount,
-                        onClick = {
-                            val doneAt = redoStack.removeLastOrNull()
-                            if (doneAt != null) scope.launch { onRestorePress(doneAt) }
-                        },
-                    )
-                    SheetButton(stringResource(R.string.counter_reset), enabled = count > 0, onClick = { confirmResetCount = true })
-                }
-            }
+            // Open from the start when the tile already uses one of them, so they aren't hidden.
+            var advanced by remember { mutableStateOf(initial.reminder != null || initial.timeDisplay != null) }
+            FoldHeader(stringResource(R.string.edit_advanced), expanded = advanced, onToggle = { advanced = !advanced })
+            AnimatedVisibility(visible = advanced, enter = expandVertically() + fadeIn(), exit = shrinkVertically() + fadeOut()) {
+                Column(verticalArrangement = Arrangement.spacedBy(22.dp)) {
+                    val context = LocalContext.current
+                    val display = draft.timeDisplay ?: TimeClickerTheme.settings.timeDisplay
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        SectionLabel(stringResource(R.string.settings_time_display))
+                        TimeDisplayPicker(
+                            selected = display,
+                            onSelect = { draft = draft.copy(timeDisplay = it) },
+                            info = tileTimeInfo(
+                                context, display,
+                                at = if (saved.hasPressed) saved.lastDoneAt else saved.createdAt,
+                                pressed = saved.hasPressed,
+                            ),
+                        )
+                    }
 
-            val context = LocalContext.current
-            val display = draft.timeDisplay ?: TimeClickerTheme.settings.timeDisplay
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                SectionLabel(stringResource(R.string.settings_time_display))
-                TimeDisplayPicker(
-                    selected = display,
-                    onSelect = { draft = draft.copy(timeDisplay = it) },
-                    info = tileTimeInfo(
-                        context, display,
-                        at = if (saved.hasPressed) saved.lastDoneAt else saved.createdAt,
-                        pressed = saved.hasPressed,
-                    ),
-                )
-            }
+                    val count = if (draft.resetCount) 0 else saved.pressCount
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        SectionLabel(stringResource(R.string.label_counter))
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text(
+                                pluralStringResource(R.plurals.press_count, count, count),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = palette.text,
+                                modifier = Modifier.weight(1f),
+                            )
+                            SheetIconButton(
+                                AppIcons.Undo,
+                                stringResource(R.string.counter_undo_last),
+                                enabled = count > 0,
+                                onClick = { scope.launch { onRevertLastPress()?.let { redoStack.add(it) } } },
+                            )
+                            SheetIconButton(
+                                AppIcons.Redo,
+                                stringResource(R.string.counter_redo_last),
+                                enabled = redoStack.isNotEmpty() && !draft.resetCount,
+                                onClick = {
+                                    val doneAt = redoStack.removeLastOrNull()
+                                    if (doneAt != null) scope.launch { onRestorePress(doneAt) }
+                                },
+                            )
+                            SheetButton(stringResource(R.string.counter_reset), enabled = count > 0, onClick = { confirmResetCount = true })
+                        }
+                    }
 
-            ReminderSection(reminder = draft.reminder, rhythm = rhythm, onChange = { draft = draft.copy(reminder = it) })
+                    ReminderSection(reminder = draft.reminder, rhythm = rhythm, onChange = { draft = draft.copy(reminder = it) })
 
-            if (onAddWidget != null) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(palette.field)
-                        // Keeps the edits, so the widget shows them and they survive the app closing once it's placed.
-                        .clickable(role = Role.Button) { close(save = true); onAddWidget() }
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Icon(AppIcons.Widget, null, tint = palette.text, modifier = Modifier.size(22.dp))
-                    Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.widget_add), style = MaterialTheme.typography.titleMedium, color = palette.text)
-                        Text(stringResource(R.string.widget_add_hint), style = MaterialTheme.typography.bodySmall, color = palette.muted)
+                    if (onAddWidget != null) {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(palette.field)
+                                // Keeps the edits, so the widget shows them and they survive the app closing once it's placed.
+                                .clickable(role = Role.Button) { close(save = true); onAddWidget() }
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        ) {
+                            Icon(AppIcons.Widget, null, tint = palette.text, modifier = Modifier.size(22.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(stringResource(R.string.widget_add), style = MaterialTheme.typography.titleMedium, color = palette.text)
+                                Text(stringResource(R.string.widget_add_hint), style = MaterialTheme.typography.bodySmall, color = palette.muted)
+                            }
+                        }
                     }
                 }
             }
@@ -370,7 +413,7 @@ fun EditTileSheet(
     pickingColor?.let { start ->
         CustomColorDialog(
             initial = start,
-            preview = { color -> TilePreview(saved, draft.copy(color = color, photo = null), photoFile) },
+            preview = { color -> TilePreview(saved, draft.copy(color = color, photo = null, size = TileSize.SMALL), photoFile) },
             onConfirm = { pickingColor = null; draft = draft.copy(color = it) },
             onDismiss = { pickingColor = null },
         )
@@ -414,9 +457,21 @@ fun EditTileSheet(
     }
 }
 
-/** The tile as it will look once saved, at the small size. */
+/** A tall tile is shrunk to this height, so the pinned header doesn't take half the screen. */
+private val PreviewMaxHeight = 200.dp
+
+/**
+ * The tile as it will look once saved: laid out at the size it has on the home screen, with grid cells
+ * [cellWidth] wide, then shrunk to fit [PreviewMaxHeight] when taller. It glides from one size to the next.
+ */
 @Composable
-private fun TilePreview(saved: Tracker, draft: TileDraft, photoFile: (String) -> File) {
+private fun TilePreview(saved: Tracker, draft: TileDraft, photoFile: (String) -> File, cellWidth: Dp = BentoMinCellWidth) {
+    val spring = spring<Dp>(dampingRatio = 0.75f, stiffness = Spring.StiffnessMediumLow)
+    val columns = draft.size.columns
+    val rows = draft.size.rows
+    val width by animateDpAsState(cellWidth * columns + TileSpacing * (columns - 1), spring, label = "previewWidth")
+    val height by animateDpAsState(TileHeight * rows + TileSpacing * (rows - 1), spring, label = "previewHeight")
+    val scale = (PreviewMaxHeight / height).coerceAtMost(1f)
     TileCard(
         tracker = Tracker(
             id = saved.id,
@@ -425,7 +480,7 @@ private fun TilePreview(saved: Tracker, draft: TileDraft, photoFile: (String) ->
             groupId = draft.groupId,
             color = draft.color,
             icon = draft.icon,
-            size = TileSize.SMALL,
+            size = draft.size,
             photo = draft.photo,
             pressCount = if (draft.resetCount) 0 else saved.pressCount,
             reminder = draft.reminder,
@@ -436,8 +491,37 @@ private fun TilePreview(saved: Tracker, draft: TileDraft, photoFile: (String) ->
         onClick = {},
         onLongClick = null,
         enabled = false,
-        modifier = Modifier.size(width = 150.dp, height = 156.dp),
+        // Measured at full size, then drawn and laid out [scale] times smaller.
+        modifier = Modifier.layout { measurable, _ ->
+            val placeable = measurable.measure(Constraints.fixed(width.roundToPx(), height.roundToPx()))
+            layout((placeable.width * scale).roundToInt(), (placeable.height * scale).roundToInt()) {
+                placeable.placeWithLayer(0, 0) {
+                    scaleX = scale
+                    scaleY = scale
+                    transformOrigin = TransformOrigin(0f, 0f)
+                }
+            }
+        },
     )
+}
+
+/** The row that folds a section of the sheet in and out: its title and a chevron turning down when open. */
+@Composable
+private fun FoldHeader(text: String, expanded: Boolean, onToggle: () -> Unit) {
+    val palette = TimeClickerTheme.palette
+    val turn by animateFloatAsState(if (expanded) 90f else 0f, label = "foldChevron")
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(palette.field)
+            .clickable(role = Role.Button, onClick = onToggle)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text, style = MaterialTheme.typography.titleMedium, color = palette.text, modifier = Modifier.weight(1f))
+        Icon(AppIcons.Chevron, null, tint = palette.text, modifier = Modifier.size(20.dp).rotate(turn))
+    }
 }
 
 @Composable

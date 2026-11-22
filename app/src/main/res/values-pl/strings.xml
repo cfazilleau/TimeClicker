@@ -89,6 +89,7 @@
     <string name="size_wide">Szeroki</string>
     <string name="size_tall">Wysoki</string>
     <string name="label_counter">Licznik</string>
+    <string name="edit_advanced">Opcje zaawansowane</string>
     <string name="counter_reset">Resetuj</string>
     <string name="counter_undo_last">Cofnij ostatnie naciśnięcie</string>
     <string name="widget_add">Dodaj do ekranu głównego</string>

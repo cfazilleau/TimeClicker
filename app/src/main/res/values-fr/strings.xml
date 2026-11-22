@@ -86,6 +86,7 @@
     <string name="size_wide">Large</string>
     <string name="size_tall">Haute</string>
     <string name="label_counter">Compteur</string>
+    <string name="edit_advanced">Options avancées</string>
     <string name="counter_reset">Réinitialiser</string>
     <string name="counter_undo_last">Annuler le dernier appui</string>
     <string name="counter_redo_last">Rétablir l’appui qui vient d’être supprimé</string>

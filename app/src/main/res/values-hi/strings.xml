@@ -77,6 +77,7 @@
     <string name="size_wide">चौड़ा</string>
     <string name="size_tall">लंबा</string>
     <string name="label_counter">काउंटर</string>
+    <string name="edit_advanced">उन्नत विकल्प</string>
     <string name="counter_reset">रीसेट करें</string>
     <string name="counter_undo_last">आखिरी टैप पूर्ववत करें</string>
     <string name="widget_add">होम स्क्रीन पर जोड़ें</string>

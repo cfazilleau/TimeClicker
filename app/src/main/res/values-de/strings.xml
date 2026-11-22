@@ -77,6 +77,7 @@
     <string name="size_wide">Breit</string>
     <string name="size_tall">Hoch</string>
     <string name="label_counter">Zähler</string>
+    <string name="edit_advanced">Erweiterte Optionen</string>
     <string name="counter_reset">Zurücksetzen</string>
     <string name="counter_undo_last">Letzten Druck rückgängig machen</string>
     <string name="widget_add">Zum Startbildschirm hinzufügen</string>

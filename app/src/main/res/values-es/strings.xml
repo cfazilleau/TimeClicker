@@ -83,6 +83,7 @@
     <string name="size_wide">Ancha</string>
     <string name="size_tall">Alta</string>
     <string name="label_counter">Contador</string>
+    <string name="edit_advanced">Opciones avanzadas</string>
     <string name="counter_reset">Restablecer</string>
     <string name="counter_undo_last">Deshacer la última pulsación</string>
     <string name="widget_add">Añadir a la pantalla de inicio</string>

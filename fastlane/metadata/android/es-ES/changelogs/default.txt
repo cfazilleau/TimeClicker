@@ -1,8 +1,3 @@
-• Colores de tarjeta personalizados: elige cualquier tono con el cuentagotas
-• Modo reordenar: arrastra las tarjetas al instante, incluso a otro grupo
-• Los grupos pueden tener un icono
-• Tiempo relativo o absoluto, a elegir en cada tarjeta
-• Una tarjeta nueva no muestra el tiempo hasta la primera pulsación
-• Contador: recupera una pulsación que acabas de deshacer
-• Los tamaños de tarjeta muestran su forma
-• Corrección: deshacer ya no se pierde al cerrar la app
+• Editar una tarjeta: una vista previa en directo queda arriba, con el tamaño y la forma reales
+• El nombre va primero y las opciones avanzadas están plegadas
+• Gestiona tus grupos con el botón tras los chips de grupo
